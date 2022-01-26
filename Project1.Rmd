@@ -1,0 +1,72 @@
+---
+title: "Project1_EricLaigaie"
+author: "Eric Laigaie"
+date: "1/19/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+rm(list = ls())
+options(scipen=999)
+library(tidyverse)
+library(readr)
+library(fastDummies)
+library(car)
+library(olsrr)
+library(MASS)
+library(qpcR)
+```
+
+```{r}
+data <- read_csv("https://raw.githubusercontent.com/ericlaigaie/AppStat_Project1/main/data1.csv")
+
+```
+```{r}
+colSums(is.na(data))
+```
+
+```{r}
+# Engine Fuel Type Missing Values - All 2004 Suzuki Veronas
+#data %>% filter(is.na(`Engine Fuel Type`))
+
+# All Suzuki Veronas and all 2004 Suzukis are 'regular unleaded' - Will input that value
+data <- data %>%
+  mutate(`Engine Fuel Type` = ifelse(is.na(`Engine Fuel Type`), 'regular unleaded', `Engine Fuel Type`))
+```
+
+```{r}
+# Engine HP Missing Values
+missing_HP <- data %>% filter(is.na(`Engine HP`)) %>% 
+  group_by(Make, Model, Year, `Engine Fuel Type`) %>% summarize()
+for (i in 1:nrow(missing_HP)) {
+  current_car <- data %>% filter(
+    Make == missing_HP[i]$Make & Model == missing_HP[i]$Model & 
+      Year == missing_HP[i]$Year & `Engine Fuel Type` == missing_HP[i]$`Engine Fuel Type`)
+  
+}
+```
+
+```{r}
+# Engine Cylinders Missing Values
+#data %>% filter(is.na(`Engine Cylinders`))
+
+# All electric cars have 0 cylinders
+data <- data %>%
+  mutate(`Engine Cylinders` = ifelse(`Engine Fuel Type` == 'electric', 0, `Engine Cylinders`))
+
+# Google says that all the remaining cars (RX-7 '93-'95, RX-8 '09-'11) have 2 cylinders
+data <- data %>%
+  mutate(`Engine Cylinders` = ifelse(is.na(`Engine Cylinders`), 2, `Engine Cylinders`))
+```
+
+```{r}
+# Number of Doors Missing Values
+#data %>% filter(is.na(`Number of Doors`))
+
+# Only two models here - '16 Tesla Model S (4 doors) & '13 Ferrari FF (2 doors)
+# This was checked with other FF's and S's within the dataset.
+data <- data %>%
+  mutate(`Number of Doors` = ifelse(is.na(`Number of Doors`),
+                                    ifelse(Model == 'FF', 2 ,4), `Number of Doors`))
+```
