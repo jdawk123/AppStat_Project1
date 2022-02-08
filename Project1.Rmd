@@ -44,44 +44,50 @@ data <- data %>%
 # Chevy Impala - Flex-fuel
 #data %>% filter(Make == 'Chevrolet' & Model == 'Impala') %>% dplyr::select(Year, `Engine Fuel Type`, `Engine HP`)
 # All other flex-fuel models have 305 HP
-data <- data %>%
-  mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'Impala', 305, `Engine HP`))
+data <- data %>% mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'Impala', 305, `Engine HP`))
 
 # Ford Escapes
 #data %>% filter(Model == 'Escape') %>% dplyr::select(Year, `Engine Fuel Type`, `Engine HP`)
 # All other regular unleaded models have 168 horsepower
-data <- data %>%
-  mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'Escape', 168, `Engine HP`))
+data <- data %>% mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'Escape', 168, `Engine HP`))
 
 # Freestars
 #data %>% filter(Model == 'Freestar')
 # 2006 models are split 193/201 and 2007 models are all 2001. According to autoblog.com, the 2005 Freestar has 193 hp.
-data <- data %>%
-  mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'Freestar', 193, `Engine HP`))
+data <- data %>% mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'Freestar', 193, `Engine HP`))
 
 # i-MiEV
 #data %>% filter(Model == 'i-MiEV')
 # Both other i-MiEVs have 66 hp. This matches with research from edmunds.com
-data <- data %>%
-  mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'i-MiEV', 66, `Engine HP`))
+data <- data %>% mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'i-MiEV', 66, `Engine HP`))
 
 # M-Class
 #data %>% filter(Model == 'M-Class')
 # All other diesel models have 240 horsepower.
-data <- data %>%
-  mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'M-Class', 240, `Engine HP`))
+data <- data %>% mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'M-Class', 240, `Engine HP`))
 
 # MKZ
 #data %>% filter(Model == 'MKZ')
 # All other MKZ with Luxury,Hybrid Market Categories have 188 HP.
-data <- data %>%
-  mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'MKZ', 188, `Engine HP`))
+data <- data %>% mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'MKZ', 188, `Engine HP`))
 
 # RAV4 EV
 #data %>% filter(Model == 'RAV4 EV')
 # All other RAV4 EV models have 154 horsepower. This matches with research from edmunds.com
-data <- data %>%
-  mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'RAV4 EV', 154, `Engine HP`))
+data <- data %>% mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'RAV4 EV', 154, `Engine HP`))
+
+# Fiat 500e - 111 horsepower (kbb.com)
+data <- data %>% mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == '500e', 111, `Engine HP`))
+# Focus - 143 horsepower (MotorTrend.com)
+data <- data %>% mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'Focus', 143, `Engine HP`))
+# Fit EV - 123 horsepower (car & driver)
+data <- data %>% mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'Fit EV', 123, `Engine HP`))
+# Soul EV - 109 horsepower (car & driver)
+data <- data %>% mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'Soul EV', 109, `Engine HP`))
+# Continental - 335 horsepower (carconnection.com)
+data <- data %>% mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'Continental', 335, `Engine HP`))
+# Leaf - 107 horsepower (USNews)
+data <- data %>% mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'Leaf', 107, `Engine HP`))
 
 # All other missing values were fixed with additional research. For instance, the Tesla Model S missing values had varying MSRP's, so trim levels had to be researched to find specific HP values. These remaining null values have already been imputed into the dataset before loading in.
 ```
