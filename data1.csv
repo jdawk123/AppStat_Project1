@@ -538,9 +538,9 @@ Mercedes-Benz,500-Class,1993,regular unleaded,315,8,AUTOMATIC,rear wheel drive,2
 Mercedes-Benz,500-Class,1993,regular unleaded,315,8,AUTOMATIC,rear wheel drive,4,"Luxury,Performance",Midsize,Sedan,18,14,617,3613
 Mercedes-Benz,500-Class,1993,regular unleaded,315,8,AUTOMATIC,rear wheel drive,2,"Luxury,Performance",Compact,Convertible,19,14,617,5140
 Mercedes-Benz,500-Class,1993,regular unleaded,315,8,AUTOMATIC,rear wheel drive,4,Luxury,Large,Sedan,16,12,617,2692
-FIAT,500e,2015,electric,,0,DIRECT_DRIVE,front wheel drive,2,Hatchback,Compact,2dr Hatchback,108,122,819,31800
-FIAT,500e,2016,electric,,0,DIRECT_DRIVE,front wheel drive,2,Hatchback,Compact,2dr Hatchback,103,121,819,31800
-FIAT,500e,2017,electric,,0,DIRECT_DRIVE,front wheel drive,2,Hatchback,Compact,2dr Hatchback,103,121,819,31800
+FIAT,500e,2015,electric,111,0,DIRECT_DRIVE,front wheel drive,2,Hatchback,Compact,2dr Hatchback,108,122,819,31800
+FIAT,500e,2016,electric,111,0,DIRECT_DRIVE,front wheel drive,2,Hatchback,Compact,2dr Hatchback,103,121,819,31800
+FIAT,500e,2017,electric,111,0,DIRECT_DRIVE,front wheel drive,2,Hatchback,Compact,2dr Hatchback,103,121,819,31800
 FIAT,500,2015,premium unleaded (recommended),160,4,MANUAL,front wheel drive,2,"Factory Tuner,Performance",Compact,Convertible,34,28,819,26595
 FIAT,500,2015,premium unleaded (recommended),101,4,MANUAL,front wheel drive,2,Hatchback,Compact,2dr Hatchback,40,31,819,18700
 FIAT,500,2015,premium unleaded (recommended),135,4,MANUAL,front wheel drive,2,Hatchback,Compact,2dr Hatchback,34,28,819,19700
@@ -821,54 +821,54 @@ Saab,9-3 Griffin,2012,flex-fuel (premium unleaded recommended/E85),220,4,AUTOMAT
 Saab,9-3 Griffin,2012,premium unleaded (recommended),220,4,AUTOMATIC,all wheel drive,4,Luxury,Midsize,Sedan,29,18,376,32395
 Saab,9-3 Griffin,2012,flex-fuel (premium unleaded recommended/E85),220,4,MANUAL,front wheel drive,4,"Flex Fuel,Luxury",Compact,Wagon,33,20,376,29830
 Saab,9-3 Griffin,2012,flex-fuel (premium unleaded recommended/E85),220,4,AUTOMATIC,front wheel drive,2,"Flex Fuel,Luxury",Compact,Convertible,28,18,376,46080
-Saab,9-3,2009,premium unleaded (recommended),210,4,AUTOMATIC,all wheel drive,4,Luxury,Compact,Wagon,27,17,376,37810
-Saab,9-3,2009,premium unleaded (recommended),280,6,AUTOMATIC,front wheel drive,2,"Luxury,Performance",Compact,Convertible,24,15,376,51330
-Saab,9-3,2009,premium unleaded (recommended),210,4,AUTOMATIC,front wheel drive,4,Luxury,Compact,Wagon,27,19,376,38305
-Saab,9-3,2009,premium unleaded (recommended),280,6,AUTOMATIC,all wheel drive,4,"Luxury,Performance",Compact,Wagon,24,15,376,44885
-Saab,9-3,2009,premium unleaded (recommended),210,4,MANUAL,front wheel drive,4,Luxury,Midsize,Sedan,29,19,376,30360
-Saab,9-3,2009,premium unleaded (recommended),210,4,MANUAL,front wheel drive,2,Luxury,Compact,Convertible,27,19,376,42130
-Saab,9-3,2009,premium unleaded (recommended),280,6,AUTOMATIC,all wheel drive,4,"Luxury,Performance",Midsize,Sedan,24,15,376,43605
-Saab,9-3,2009,premium unleaded (recommended),210,4,MANUAL,front wheel drive,4,Luxury,Compact,Wagon,29,19,376,31790
-Saab,9-3,2009,premium unleaded (recommended),210,4,AUTOMATIC,front wheel drive,4,Luxury,Compact,Wagon,27,19,376,35315
-Saab,9-3,2009,premium unleaded (recommended),210,4,AUTOMATIC,front wheel drive,4,Luxury,Midsize,Sedan,28,19,376,37140
-Saab,9-3,2009,premium unleaded (recommended),210,4,AUTOMATIC,front wheel drive,4,Luxury,Midsize,Sedan,28,19,376,34150
-Saab,9-3,2009,premium unleaded (recommended),210,4,AUTOMATIC,front wheel drive,2,Luxury,Compact,Convertible,27,19,376,44455
-Saab,9-3,2009,premium unleaded (recommended),210,4,AUTOMATIC,all wheel drive,4,Luxury,Midsize,Sedan,27,17,376,36395
-Saab,9-3,2009,premium unleaded (recommended),210,4,AUTOMATIC,front wheel drive,2,Luxury,Compact,Convertible,27,19,376,47345
-Saab,9-3,2010,premium unleaded (recommended),207,4,AUTOMATIC,all wheel drive,4,Luxury,Midsize,Sedan,27,17,376,32395
-Saab,9-3,2010,premium unleaded (recommended),207,4,MANUAL,front wheel drive,4,Luxury,Midsize,Sedan,31,21,376,28900
-Saab,9-3,2010,premium unleaded (recommended),207,4,MANUAL,front wheel drive,4,Luxury,Compact,Wagon,31,21,376,30330
-Saab,9-3,2010,premium unleaded (recommended),207,4,MANUAL,front wheel drive,2,Luxury,Compact,Convertible,29,20,376,39990
-Saab,9-3,2010,premium unleaded (recommended),207,4,AUTOMATIC,all wheel drive,4,Luxury,Midsize,Sedan,27,17,376,38115
-Saab,9-3,2010,premium unleaded (recommended),207,4,AUTOMATIC,front wheel drive,2,Luxury,Compact,Convertible,27,19,376,45080
-Saab,9-3,2010,premium unleaded (recommended),207,4,AUTOMATIC,front wheel drive,4,Luxury,Midsize,Sedan,28,19,376,35340
-Saab,9-3,2010,premium unleaded (recommended),207,4,AUTOMATIC,all wheel drive,4,Luxury,Compact,Wagon,27,17,376,36975
-Saab,9-3,2010,premium unleaded (recommended),207,4,AUTOMATIC,front wheel drive,4,Luxury,Compact,Wagon,27,19,376,37020
-Saab,9-3,2011,premium unleaded (recommended),210,4,MANUAL,front wheel drive,4,Luxury,Midsize,Sedan,31,21,376,28900
-Saab,9-3,2011,premium unleaded (recommended),210,4,AUTOMATIC,all wheel drive,4,Luxury,Midsize,Sedan,27,17,376,38115
-Saab,9-3,2011,premium unleaded (recommended),210,4,AUTOMATIC,all wheel drive,4,Luxury,Midsize,Sedan,27,17,376,32395
-Saab,9-3,2011,premium unleaded (recommended),210,4,MANUAL,front wheel drive,2,Luxury,Compact,Convertible,29,20,376,39990
-Saab,9-3,2011,premium unleaded (recommended),210,4,MANUAL,front wheel drive,4,Luxury,Compact,Wagon,31,21,376,30330
-Saab,9-3,2011,premium unleaded (recommended),210,4,AUTOMATIC,front wheel drive,4,Luxury,Compact,Wagon,27,19,376,37020
-Saab,9-3,2011,premium unleaded (recommended),210,4,AUTOMATIC,front wheel drive,4,Luxury,Midsize,Sedan,28,19,376,35340
-Saab,9-3,2011,premium unleaded (recommended),210,4,AUTOMATIC,all wheel drive,4,Luxury,Compact,Wagon,27,17,376,36975
-Saab,9-3,2011,premium unleaded (recommended),210,4,AUTOMATIC,front wheel drive,2,Luxury,Compact,Convertible,27,19,376,45080
+Saab,3-Sep,2009,premium unleaded (recommended),210,4,AUTOMATIC,all wheel drive,4,Luxury,Compact,Wagon,27,17,376,37810
+Saab,3-Sep,2009,premium unleaded (recommended),280,6,AUTOMATIC,front wheel drive,2,"Luxury,Performance",Compact,Convertible,24,15,376,51330
+Saab,3-Sep,2009,premium unleaded (recommended),210,4,AUTOMATIC,front wheel drive,4,Luxury,Compact,Wagon,27,19,376,38305
+Saab,3-Sep,2009,premium unleaded (recommended),280,6,AUTOMATIC,all wheel drive,4,"Luxury,Performance",Compact,Wagon,24,15,376,44885
+Saab,3-Sep,2009,premium unleaded (recommended),210,4,MANUAL,front wheel drive,4,Luxury,Midsize,Sedan,29,19,376,30360
+Saab,3-Sep,2009,premium unleaded (recommended),210,4,MANUAL,front wheel drive,2,Luxury,Compact,Convertible,27,19,376,42130
+Saab,3-Sep,2009,premium unleaded (recommended),280,6,AUTOMATIC,all wheel drive,4,"Luxury,Performance",Midsize,Sedan,24,15,376,43605
+Saab,3-Sep,2009,premium unleaded (recommended),210,4,MANUAL,front wheel drive,4,Luxury,Compact,Wagon,29,19,376,31790
+Saab,3-Sep,2009,premium unleaded (recommended),210,4,AUTOMATIC,front wheel drive,4,Luxury,Compact,Wagon,27,19,376,35315
+Saab,3-Sep,2009,premium unleaded (recommended),210,4,AUTOMATIC,front wheel drive,4,Luxury,Midsize,Sedan,28,19,376,37140
+Saab,3-Sep,2009,premium unleaded (recommended),210,4,AUTOMATIC,front wheel drive,4,Luxury,Midsize,Sedan,28,19,376,34150
+Saab,3-Sep,2009,premium unleaded (recommended),210,4,AUTOMATIC,front wheel drive,2,Luxury,Compact,Convertible,27,19,376,44455
+Saab,3-Sep,2009,premium unleaded (recommended),210,4,AUTOMATIC,all wheel drive,4,Luxury,Midsize,Sedan,27,17,376,36395
+Saab,3-Sep,2009,premium unleaded (recommended),210,4,AUTOMATIC,front wheel drive,2,Luxury,Compact,Convertible,27,19,376,47345
+Saab,3-Sep,2010,premium unleaded (recommended),207,4,AUTOMATIC,all wheel drive,4,Luxury,Midsize,Sedan,27,17,376,32395
+Saab,3-Sep,2010,premium unleaded (recommended),207,4,MANUAL,front wheel drive,4,Luxury,Midsize,Sedan,31,21,376,28900
+Saab,3-Sep,2010,premium unleaded (recommended),207,4,MANUAL,front wheel drive,4,Luxury,Compact,Wagon,31,21,376,30330
+Saab,3-Sep,2010,premium unleaded (recommended),207,4,MANUAL,front wheel drive,2,Luxury,Compact,Convertible,29,20,376,39990
+Saab,3-Sep,2010,premium unleaded (recommended),207,4,AUTOMATIC,all wheel drive,4,Luxury,Midsize,Sedan,27,17,376,38115
+Saab,3-Sep,2010,premium unleaded (recommended),207,4,AUTOMATIC,front wheel drive,2,Luxury,Compact,Convertible,27,19,376,45080
+Saab,3-Sep,2010,premium unleaded (recommended),207,4,AUTOMATIC,front wheel drive,4,Luxury,Midsize,Sedan,28,19,376,35340
+Saab,3-Sep,2010,premium unleaded (recommended),207,4,AUTOMATIC,all wheel drive,4,Luxury,Compact,Wagon,27,17,376,36975
+Saab,3-Sep,2010,premium unleaded (recommended),207,4,AUTOMATIC,front wheel drive,4,Luxury,Compact,Wagon,27,19,376,37020
+Saab,3-Sep,2011,premium unleaded (recommended),210,4,MANUAL,front wheel drive,4,Luxury,Midsize,Sedan,31,21,376,28900
+Saab,3-Sep,2011,premium unleaded (recommended),210,4,AUTOMATIC,all wheel drive,4,Luxury,Midsize,Sedan,27,17,376,38115
+Saab,3-Sep,2011,premium unleaded (recommended),210,4,AUTOMATIC,all wheel drive,4,Luxury,Midsize,Sedan,27,17,376,32395
+Saab,3-Sep,2011,premium unleaded (recommended),210,4,MANUAL,front wheel drive,2,Luxury,Compact,Convertible,29,20,376,39990
+Saab,3-Sep,2011,premium unleaded (recommended),210,4,MANUAL,front wheel drive,4,Luxury,Compact,Wagon,31,21,376,30330
+Saab,3-Sep,2011,premium unleaded (recommended),210,4,AUTOMATIC,front wheel drive,4,Luxury,Compact,Wagon,27,19,376,37020
+Saab,3-Sep,2011,premium unleaded (recommended),210,4,AUTOMATIC,front wheel drive,4,Luxury,Midsize,Sedan,28,19,376,35340
+Saab,3-Sep,2011,premium unleaded (recommended),210,4,AUTOMATIC,all wheel drive,4,Luxury,Compact,Wagon,27,17,376,36975
+Saab,3-Sep,2011,premium unleaded (recommended),210,4,AUTOMATIC,front wheel drive,2,Luxury,Compact,Convertible,27,19,376,45080
 Saab,9-4X,2011,premium unleaded (required),265,6,AUTOMATIC,front wheel drive,4,"Crossover,Luxury",Midsize,4dr SUV,25,18,376,37250
 Saab,9-4X,2011,premium unleaded (required),265,6,AUTOMATIC,all wheel drive,4,"Crossover,Luxury",Midsize,4dr SUV,23,17,376,35875
 Saab,9-4X,2011,premium unleaded (required),265,6,AUTOMATIC,front wheel drive,4,"Crossover,Luxury",Midsize,4dr SUV,25,18,376,33380
 Saab,9-4X,2011,premium unleaded (required),265,6,AUTOMATIC,all wheel drive,4,"Crossover,Luxury",Midsize,4dr SUV,23,17,376,40245
 Saab,9-4X,2011,premium unleaded (required),300,6,AUTOMATIC,all wheel drive,4,"Crossover,Luxury",Midsize,4dr SUV,22,15,376,48010
-Saab,9-5,2009,premium unleaded (recommended),260,4,AUTOMATIC,front wheel drive,4,"Luxury,Performance",Midsize,Sedan,27,17,376,39400
-Saab,9-5,2009,premium unleaded (recommended),260,4,AUTOMATIC,front wheel drive,4,"Luxury,Performance",Midsize,Wagon,27,17,376,43270
-Saab,9-5,2009,premium unleaded (recommended),260,4,AUTOMATIC,front wheel drive,4,"Luxury,Performance",Midsize,Wagon,27,17,376,39650
-Saab,9-5,2009,premium unleaded (recommended),260,4,AUTOMATIC,front wheel drive,4,"Luxury,Performance",Midsize,Sedan,27,17,376,38380
-Saab,9-5,2009,premium unleaded (recommended),260,4,AUTOMATIC,front wheel drive,4,"Luxury,Performance",Midsize,Wagon,27,17,376,40765
-Saab,9-5,2009,premium unleaded (recommended),260,4,AUTOMATIC,front wheel drive,4,"Luxury,Performance",Midsize,Sedan,27,17,376,42000
-Saab,9-5,2010,premium unleaded (recommended),300,6,AUTOMATIC,all wheel drive,4,"Luxury,Performance",Large,Sedan,27,16,376,49165
-Saab,9-5,2011,premium unleaded (recommended),220,4,MANUAL,front wheel drive,4,Luxury,Large,Sedan,33,20,376,38525
-Saab,9-5,2011,premium unleaded (recommended),300,6,AUTOMATIC,all wheel drive,4,"Luxury,Performance",Large,Sedan,27,17,376,49565
-Saab,9-5,2011,premium unleaded (recommended),220,4,AUTOMATIC,front wheel drive,4,Luxury,Large,Sedan,28,18,376,43435
-Saab,9-5,2011,premium unleaded (recommended),300,6,AUTOMATIC,all wheel drive,4,"Luxury,Performance",Large,Sedan,27,17,376,48030
+Saab,5-Sep,2009,premium unleaded (recommended),260,4,AUTOMATIC,front wheel drive,4,"Luxury,Performance",Midsize,Sedan,27,17,376,39400
+Saab,5-Sep,2009,premium unleaded (recommended),260,4,AUTOMATIC,front wheel drive,4,"Luxury,Performance",Midsize,Wagon,27,17,376,43270
+Saab,5-Sep,2009,premium unleaded (recommended),260,4,AUTOMATIC,front wheel drive,4,"Luxury,Performance",Midsize,Wagon,27,17,376,39650
+Saab,5-Sep,2009,premium unleaded (recommended),260,4,AUTOMATIC,front wheel drive,4,"Luxury,Performance",Midsize,Sedan,27,17,376,38380
+Saab,5-Sep,2009,premium unleaded (recommended),260,4,AUTOMATIC,front wheel drive,4,"Luxury,Performance",Midsize,Wagon,27,17,376,40765
+Saab,5-Sep,2009,premium unleaded (recommended),260,4,AUTOMATIC,front wheel drive,4,"Luxury,Performance",Midsize,Sedan,27,17,376,42000
+Saab,5-Sep,2010,premium unleaded (recommended),300,6,AUTOMATIC,all wheel drive,4,"Luxury,Performance",Large,Sedan,27,16,376,49165
+Saab,5-Sep,2011,premium unleaded (recommended),220,4,MANUAL,front wheel drive,4,Luxury,Large,Sedan,33,20,376,38525
+Saab,5-Sep,2011,premium unleaded (recommended),300,6,AUTOMATIC,all wheel drive,4,"Luxury,Performance",Large,Sedan,27,17,376,49565
+Saab,5-Sep,2011,premium unleaded (recommended),220,4,AUTOMATIC,front wheel drive,4,Luxury,Large,Sedan,28,18,376,43435
+Saab,5-Sep,2011,premium unleaded (recommended),300,6,AUTOMATIC,all wheel drive,4,"Luxury,Performance",Large,Sedan,27,17,376,48030
 Saab,9-7X,2007,regular unleaded,290,6,AUTOMATIC,all wheel drive,4,Luxury,Midsize,4dr SUV,20,14,376,39190
 Saab,9-7X,2007,regular unleaded,300,8,AUTOMATIC,all wheel drive,4,Luxury,Midsize,4dr SUV,19,13,376,41190
 Saab,9-7X,2008,regular unleaded,300,8,AUTOMATIC,all wheel drive,4,Luxury,Midsize,4dr SUV,19,13,376,42770
@@ -2904,10 +2904,10 @@ Lincoln,Continental,2002,premium unleaded (required),275,8,AUTOMATIC,front wheel
 Lincoln,Continental,2017,regular unleaded,305,6,AUTOMATIC,front wheel drive,4,Luxury,Large,Sedan,26,17,61,44560
 Lincoln,Continental,2017,regular unleaded,305,6,AUTOMATIC,all wheel drive,4,Luxury,Large,Sedan,24,16,61,46560
 Lincoln,Continental,2017,regular unleaded,305,6,AUTOMATIC,all wheel drive,4,Luxury,Large,Sedan,24,16,61,49515
-Lincoln,Continental,2017,premium unleaded (recommended),,6,AUTOMATIC,all wheel drive,4,Luxury,Large,Sedan,25,17,61,55915
-Lincoln,Continental,2017,premium unleaded (recommended),,6,AUTOMATIC,front wheel drive,4,Luxury,Large,Sedan,27,18,61,62915
-Lincoln,Continental,2017,premium unleaded (recommended),,6,AUTOMATIC,front wheel drive,4,Luxury,Large,Sedan,27,18,61,53915
-Lincoln,Continental,2017,premium unleaded (recommended),,6,AUTOMATIC,all wheel drive,4,Luxury,Large,Sedan,25,17,61,64915
+Lincoln,Continental,2017,premium unleaded (recommended),335,6,AUTOMATIC,all wheel drive,4,Luxury,Large,Sedan,25,17,61,55915
+Lincoln,Continental,2017,premium unleaded (recommended),335,6,AUTOMATIC,front wheel drive,4,Luxury,Large,Sedan,27,18,61,62915
+Lincoln,Continental,2017,premium unleaded (recommended),335,6,AUTOMATIC,front wheel drive,4,Luxury,Large,Sedan,27,18,61,53915
+Lincoln,Continental,2017,premium unleaded (recommended),335,6,AUTOMATIC,all wheel drive,4,Luxury,Large,Sedan,25,17,61,64915
 Lincoln,Continental,2017,regular unleaded,305,6,AUTOMATIC,front wheel drive,4,Luxury,Large,Sedan,26,17,61,47515
 Ford,Contour SVT,1998,regular unleaded,195,6,MANUAL,front wheel drive,4,"Factory Tuner,Performance",Midsize,Sedan,26,17,5657,2655
 Ford,Contour SVT,1999,regular unleaded,200,6,MANUAL,front wheel drive,4,"Factory Tuner,Performance",Midsize,Sedan,26,17,5657,2702
@@ -4704,8 +4704,8 @@ Pontiac,Firebird,2002,premium unleaded (required),310,8,AUTOMATIC,rear wheel dri
 Pontiac,Firebird,2002,premium unleaded (required),310,8,AUTOMATIC,rear wheel drive,2,"Hatchback,Factory Tuner,Performance",Midsize,2dr Hatchback,23,16,210,28025
 Pontiac,Firebird,2002,regular unleaded,200,6,MANUAL,rear wheel drive,2,"Hatchback,Performance",Midsize,2dr Hatchback,29,17,210,20050
 Pontiac,Firebird,2002,regular unleaded,200,6,AUTOMATIC,rear wheel drive,2,N/A,Midsize,Convertible,28,17,210,26965
-Honda,Fit EV,2013,electric,,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,105,132,2202,36625
-Honda,Fit EV,2014,electric,,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,105,132,2202,36625
+Honda,Fit EV,2013,electric,123,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,105,132,2202,36625
+Honda,Fit EV,2014,electric,123,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,105,132,2202,36625
 Honda,Fit,2015,regular unleaded,130,4,MANUAL,front wheel drive,4,Hatchback,Compact,4dr Hatchback,37,29,2202,15650
 Honda,Fit,2015,regular unleaded,130,4,MANUAL,front wheel drive,4,Hatchback,Compact,4dr Hatchback,37,29,2202,17560
 Honda,Fit,2015,regular unleaded,130,4,AUTOMATIC,front wheel drive,4,Hatchback,Compact,4dr Hatchback,38,32,2202,19925
@@ -4784,11 +4784,11 @@ Ford,Focus,2015,flex-fuel (unleaded/E85),160,4,MANUAL,front wheel drive,4,"Hatch
 Ford,Focus,2015,flex-fuel (unleaded/E85),160,4,AUTOMATED_MANUAL,front wheel drive,4,Flex Fuel,Compact,Sedan,40,27,5657,23170
 Ford,Focus,2015,flex-fuel (unleaded/E85),160,4,MANUAL,front wheel drive,4,Flex Fuel,Compact,Sedan,36,26,5657,17170
 Ford,Focus,2015,flex-fuel (unleaded/E85),160,4,AUTOMATED_MANUAL,front wheel drive,4,"Hatchback,Flex Fuel",Compact,4dr Hatchback,40,27,5657,23670
-Ford,Focus,2015,electric,,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,99,110,5657,29170
+Ford,Focus,2015,electric,143,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,99,110,5657,29170
 Ford,Focus,2016,flex-fuel (unleaded/E85),160,4,MANUAL,front wheel drive,4,Flex Fuel,Compact,Sedan,36,26,5657,18515
 Ford,Focus,2016,flex-fuel (unleaded/E85),160,4,AUTOMATED_MANUAL,front wheel drive,4,"Hatchback,Flex Fuel",Compact,4dr Hatchback,40,27,5657,23725
 Ford,Focus,2016,flex-fuel (unleaded/E85),160,4,AUTOMATED_MANUAL,front wheel drive,4,Flex Fuel,Compact,Sedan,40,27,5657,23225
-Ford,Focus,2016,electric,,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,99,110,5657,29170
+Ford,Focus,2016,electric,143,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,99,110,5657,29170
 Ford,Focus,2016,flex-fuel (unleaded/E85),160,4,MANUAL,front wheel drive,4,"Hatchback,Flex Fuel",Compact,4dr Hatchback,36,26,5657,19015
 Ford,Focus,2016,flex-fuel (unleaded/E85),160,4,MANUAL,front wheel drive,4,Flex Fuel,Compact,Sedan,36,26,5657,17225
 Ford,Focus,2017,flex-fuel (unleaded/E85),160,4,AUTOMATED_MANUAL,front wheel drive,4,"Hatchback,Flex Fuel",Compact,4dr Hatchback,40,27,5657,21675
@@ -4797,7 +4797,7 @@ Ford,Focus,2017,flex-fuel (unleaded/E85),160,4,MANUAL,front wheel drive,4,Flex F
 Ford,Focus,2017,flex-fuel (unleaded/E85),160,4,AUTOMATED_MANUAL,front wheel drive,4,"Hatchback,Flex Fuel",Compact,4dr Hatchback,40,27,5657,24075
 Ford,Focus,2017,flex-fuel (unleaded/E85),160,4,AUTOMATED_MANUAL,front wheel drive,4,Flex Fuel,Compact,Sedan,40,27,5657,23575
 Ford,Focus,2017,flex-fuel (unleaded/E85),160,4,AUTOMATED_MANUAL,front wheel drive,4,Flex Fuel,Compact,Sedan,40,27,5657,21175
-Ford,Focus,2017,electric,,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,99,110,5657,29120
+Ford,Focus,2017,electric,143,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,99,110,5657,29120
 Ford,Focus,2017,flex-fuel (unleaded/E85),160,4,AUTOMATED_MANUAL,front wheel drive,4,"Hatchback,Flex Fuel",Compact,4dr Hatchback,40,27,5657,19765
 Suzuki,Forenza,2006,regular unleaded,126,4,AUTOMATIC,front wheel drive,4,N/A,Compact,Wagon,27,19,481,16699
 Suzuki,Forenza,2006,regular unleaded,126,4,MANUAL,front wheel drive,4,N/A,Compact,Sedan,28,20,481,13799
@@ -6384,16 +6384,16 @@ Pontiac,Le Mans,1992,regular unleaded,74,4,MANUAL,front wheel drive,2,N/A,Compac
 Pontiac,Le Mans,1993,regular unleaded,74,4,MANUAL,front wheel drive,4,N/A,Compact,Sedan,37,26,210,2000
 Pontiac,Le Mans,1993,regular unleaded,74,4,MANUAL,front wheel drive,2,N/A,Compact,Coupe,34,24,210,2000
 Pontiac,Le Mans,1993,regular unleaded,74,4,MANUAL,front wheel drive,2,N/A,Compact,Coupe,37,26,210,2000
-Nissan,Leaf,2014,electric,,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,101,126,2009,35020
-Nissan,Leaf,2014,electric,,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,101,126,2009,32000
-Nissan,Leaf,2014,electric,,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,101,126,2009,28980
-Nissan,Leaf,2015,electric,,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,101,126,2009,32100
-Nissan,Leaf,2015,electric,,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,101,126,2009,35120
-Nissan,Leaf,2015,electric,,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,101,126,2009,29010
-Nissan,Leaf,2015,electric,,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,101,126,2009,32000
-Nissan,Leaf,2016,electric,,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,101,126,2009,29010
-Nissan,Leaf,2016,electric,,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,101,124,2009,34200
-Nissan,Leaf,2016,electric,,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,101,124,2009,36790
+Nissan,Leaf,2014,electric,107,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,101,126,2009,35020
+Nissan,Leaf,2014,electric,107,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,101,126,2009,32000
+Nissan,Leaf,2014,electric,107,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,101,126,2009,28980
+Nissan,Leaf,2015,electric,107,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,101,126,2009,32100
+Nissan,Leaf,2015,electric,107,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,101,126,2009,35120
+Nissan,Leaf,2015,electric,107,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,101,126,2009,29010
+Nissan,Leaf,2015,electric,107,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,101,126,2009,32000
+Nissan,Leaf,2016,electric,107,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,101,126,2009,29010
+Nissan,Leaf,2016,electric,107,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,101,124,2009,34200
+Nissan,Leaf,2016,electric,107,0,DIRECT_DRIVE,front wheel drive,4,Hatchback,Compact,4dr Hatchback,101,124,2009,36790
 Subaru,Legacy,2015,regular unleaded,175,4,AUTOMATIC,all wheel drive,4,N/A,Midsize,Sedan,36,26,640,26495
 Subaru,Legacy,2015,regular unleaded,256,6,AUTOMATIC,all wheel drive,4,Performance,Midsize,Sedan,28,20,640,29595
 Subaru,Legacy,2015,regular unleaded,175,4,AUTOMATIC,all wheel drive,4,N/A,Midsize,Sedan,36,26,640,26795
@@ -6920,24 +6920,24 @@ Lincoln,MKZ,2017,premium unleaded (recommended),245,4,AUTOMATIC,front wheel driv
 Lincoln,MKZ,2017,regular unleaded,,4,AUTOMATIC,front wheel drive,4,"Luxury,Hybrid",Midsize,Sedan,38,41,61,47670
 Lincoln,MKZ,2017,premium unleaded (recommended),245,4,AUTOMATIC,all wheel drive,4,Luxury,Midsize,Sedan,28,20,61,38650
 Mercedes-Benz,ML55 AMG,2000,regular unleaded,342,8,AUTOMATIC,all wheel drive,4,"Factory Tuner,Luxury,Performance",Midsize,4dr SUV,16,12,617,5650
-Tesla,Model S,2014,electric,,0,DIRECT_DRIVE,rear wheel drive,4,"Exotic,High-Performance",Large,Sedan,90,88,1391,79900
-Tesla,Model S,2014,electric,,0,DIRECT_DRIVE,rear wheel drive,4,"Exotic,Performance",Large,Sedan,97,94,1391,69900
-Tesla,Model S,2014,electric,,0,DIRECT_DRIVE,all wheel drive,4,"Exotic,High-Performance",Large,Sedan,94,86,1391,104500
-Tesla,Model S,2014,electric,,0,DIRECT_DRIVE,rear wheel drive,4,"Exotic,High-Performance",Large,Sedan,90,88,1391,93400
-Tesla,Model S,2015,electric,,0,DIRECT_DRIVE,rear wheel drive,4,"Exotic,Performance",Large,Sedan,97,94,1391,69900
-Tesla,Model S,2015,electric,,0,DIRECT_DRIVE,all wheel drive,4,"Exotic,Performance",Large,Sedan,102,101,1391,75000
-Tesla,Model S,2015,electric,,0,DIRECT_DRIVE,all wheel drive,4,"Exotic,High-Performance",Large,Sedan,106,95,1391,85000
-Tesla,Model S,2015,electric,,0,DIRECT_DRIVE,all wheel drive,4,"Exotic,High-Performance",Large,Sedan,98,89,1391,105000
-Tesla,Model S,2015,electric,,0,DIRECT_DRIVE,rear wheel drive,4,"Exotic,Performance",Large,Sedan,90,88,1391,80000
-Tesla,Model S,2016,electric,,0,DIRECT_DRIVE,all wheel drive,,"Exotic,Performance",Large,Sedan,105,102,1391,79500
-Tesla,Model S,2016,electric,,0,DIRECT_DRIVE,all wheel drive,,"Exotic,Performance",Large,Sedan,101,98,1391,66000
-Tesla,Model S,2016,electric,,0,DIRECT_DRIVE,all wheel drive,,"Exotic,High-Performance",Large,Sedan,105,92,1391,134500
-Tesla,Model S,2016,electric,,0,DIRECT_DRIVE,rear wheel drive,,"Exotic,Performance",Large,Sedan,100,97,1391,74500
-Tesla,Model S,2016,electric,,0,DIRECT_DRIVE,all wheel drive,,"Exotic,Performance",Large,Sedan,107,101,1391,71000
-Tesla,Model S,2016,electric,,0,DIRECT_DRIVE,all wheel drive,4,"Exotic,Performance",Large,Sedan,102,101,1391,75000
-Tesla,Model S,2016,electric,,0,DIRECT_DRIVE,all wheel drive,4,"Exotic,High-Performance",Large,Sedan,107,101,1391,89500
-Tesla,Model S,2016,electric,,0,DIRECT_DRIVE,all wheel drive,4,"Exotic,High-Performance",Large,Sedan,100,91,1391,112000
-Tesla,Model S,2016,electric,,0,DIRECT_DRIVE,rear wheel drive,4,"Exotic,Performance",Large,Sedan,90,88,1391,70000
+Tesla,Model S,2014,electric,362,0,DIRECT_DRIVE,rear wheel drive,4,"Exotic,High-Performance",Large,Sedan,90,88,1391,79900
+Tesla,Model S,2014,electric,302,0,DIRECT_DRIVE,rear wheel drive,4,"Exotic,Performance",Large,Sedan,97,94,1391,69900
+Tesla,Model S,2014,electric,691,0,DIRECT_DRIVE,all wheel drive,4,"Exotic,High-Performance",Large,Sedan,94,86,1391,104500
+Tesla,Model S,2014,electric,416,0,DIRECT_DRIVE,rear wheel drive,4,"Exotic,High-Performance",Large,Sedan,90,88,1391,93400
+Tesla,Model S,2015,electric,380,0,DIRECT_DRIVE,rear wheel drive,4,"Exotic,Performance",Large,Sedan,97,94,1391,69900
+Tesla,Model S,2015,electric,329,0,DIRECT_DRIVE,all wheel drive,4,"Exotic,Performance",Large,Sedan,102,101,1391,75000
+Tesla,Model S,2015,electric,422,0,DIRECT_DRIVE,all wheel drive,4,"Exotic,High-Performance",Large,Sedan,106,95,1391,85000
+Tesla,Model S,2015,electric,691,0,DIRECT_DRIVE,all wheel drive,4,"Exotic,High-Performance",Large,Sedan,98,89,1391,105000
+Tesla,Model S,2015,electric,380,0,DIRECT_DRIVE,rear wheel drive,4,"Exotic,Performance",Large,Sedan,90,88,1391,80000
+Tesla,Model S,2016,electric,518,0,DIRECT_DRIVE,all wheel drive,,"Exotic,Performance",Large,Sedan,105,102,1391,79500
+Tesla,Model S,2016,electric,382,0,DIRECT_DRIVE,all wheel drive,,"Exotic,Performance",Large,Sedan,101,98,1391,66000
+Tesla,Model S,2016,electric,762,0,DIRECT_DRIVE,all wheel drive,,"Exotic,High-Performance",Large,Sedan,105,92,1391,134500
+Tesla,Model S,2016,electric,382,0,DIRECT_DRIVE,rear wheel drive,,"Exotic,Performance",Large,Sedan,100,97,1391,74500
+Tesla,Model S,2016,electric,315,0,DIRECT_DRIVE,all wheel drive,,"Exotic,Performance",Large,Sedan,107,101,1391,71000
+Tesla,Model S,2016,electric,382,0,DIRECT_DRIVE,all wheel drive,4,"Exotic,Performance",Large,Sedan,102,101,1391,75000
+Tesla,Model S,2016,electric,417,0,DIRECT_DRIVE,all wheel drive,4,"Exotic,High-Performance",Large,Sedan,107,101,1391,89500
+Tesla,Model S,2016,electric,691,0,DIRECT_DRIVE,all wheel drive,4,"Exotic,High-Performance",Large,Sedan,100,91,1391,112000
+Tesla,Model S,2016,electric,315,0,DIRECT_DRIVE,rear wheel drive,4,"Exotic,Performance",Large,Sedan,90,88,1391,70000
 Dodge,Monaco,1990,regular unleaded,150,6,AUTOMATIC,front wheel drive,4,N/A,Midsize,Sedan,24,15,1851,2000
 Dodge,Monaco,1990,regular unleaded,150,6,AUTOMATIC,front wheel drive,4,N/A,Midsize,Sedan,24,15,1851,2000
 Dodge,Monaco,1991,regular unleaded,150,6,AUTOMATIC,front wheel drive,4,N/A,Midsize,Sedan,24,16,1851,2000
@@ -9849,11 +9849,11 @@ Kia,Sorento,2017,regular unleaded,185,4,AUTOMATIC,front wheel drive,4,Crossover,
 Kia,Sorento,2017,regular unleaded,290,6,AUTOMATIC,all wheel drive,4,Crossover,Midsize,4dr SUV,25,18,1720,34900
 Kia,Sorento,2017,regular unleaded,185,4,AUTOMATIC,front wheel drive,4,Crossover,Midsize,4dr SUV,28,21,1720,26700
 Kia,Sorento,2017,regular unleaded,240,4,AUTOMATIC,all wheel drive,4,Crossover,Midsize,4dr SUV,25,19,1720,33300
-Kia,Soul EV,2015,electric,,0,DIRECT_DRIVE,front wheel drive,4,N/A,Compact,Wagon,92,120,1720,35700
-Kia,Soul EV,2015,electric,,0,DIRECT_DRIVE,front wheel drive,4,N/A,Compact,Wagon,92,120,1720,33700
-Kia,Soul EV,2016,electric,,0,DIRECT_DRIVE,front wheel drive,4,N/A,Compact,Wagon,92,120,1720,33950
-Kia,Soul EV,2016,electric,,0,DIRECT_DRIVE,front wheel drive,4,N/A,Compact,Wagon,92,120,1720,31950
-Kia,Soul EV,2016,electric,,0,DIRECT_DRIVE,front wheel drive,4,N/A,Compact,Wagon,92,120,1720,35950
+Kia,Soul EV,2015,electric,109,0,DIRECT_DRIVE,front wheel drive,4,N/A,Compact,Wagon,92,120,1720,35700
+Kia,Soul EV,2015,electric,109,0,DIRECT_DRIVE,front wheel drive,4,N/A,Compact,Wagon,92,120,1720,33700
+Kia,Soul EV,2016,electric,109,0,DIRECT_DRIVE,front wheel drive,4,N/A,Compact,Wagon,92,120,1720,33950
+Kia,Soul EV,2016,electric,109,0,DIRECT_DRIVE,front wheel drive,4,N/A,Compact,Wagon,92,120,1720,31950
+Kia,Soul EV,2016,electric,109,0,DIRECT_DRIVE,front wheel drive,4,N/A,Compact,Wagon,92,120,1720,35950
 Kia,Soul,2014,regular unleaded,130,4,AUTOMATIC,front wheel drive,4,N/A,Compact,Wagon,30,24,1720,16900
 Kia,Soul,2014,regular unleaded,164,4,AUTOMATIC,front wheel drive,4,N/A,Compact,Wagon,31,23,1720,20500
 Kia,Soul,2014,regular unleaded,164,4,AUTOMATIC,front wheel drive,4,N/A,Compact,Wagon,31,23,1720,18400

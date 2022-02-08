@@ -20,7 +20,6 @@ library(qpcR)
 
 ```{r}
 data <- read_csv("https://raw.githubusercontent.com/ericlaigaie/AppStat_Project1/main/data1.csv")
-
 ```
 ```{r}
 colSums(is.na(data))
@@ -36,15 +35,55 @@ data <- data %>%
 ```
 
 ```{r}
-# Engine HP Missing Values
-missing_HP <- data %>% filter(is.na(`Engine HP`)) %>% 
-  group_by(Make, Model, Year, `Engine Fuel Type`) %>% summarize()
-for (i in 1:nrow(missing_HP)) {
-  current_car <- data %>% filter(
-    Make == missing_HP[i]$Make & Model == missing_HP[i]$Model & 
-      Year == missing_HP[i]$Year & `Engine Fuel Type` == missing_HP[i]$`Engine Fuel Type`)
-  
-}
+# Engine HP Missing Values - ~.57% of data
+#data %>% filter(is.na(`Engine HP`))
+
+# We have 69 missing values spread across ~13 different models
+# Some of these models have data from other years, while some will require more research
+
+# Chevy Impala - Flex-fuel
+#data %>% filter(Make == 'Chevrolet' & Model == 'Impala') %>% dplyr::select(Year, `Engine Fuel Type`, `Engine HP`)
+# All other flex-fuel models have 305 HP
+data <- data %>%
+  mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'Impala', 305, `Engine HP`))
+
+# Ford Escapes
+#data %>% filter(Model == 'Escape') %>% dplyr::select(Year, `Engine Fuel Type`, `Engine HP`)
+# All other regular unleaded models have 168 horsepower
+data <- data %>%
+  mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'Escape', 168, `Engine HP`))
+
+# Freestars
+#data %>% filter(Model == 'Freestar')
+# 2006 models are split 193/201 and 2007 models are all 2001. According to autoblog.com, the 2005 Freestar has 193 hp.
+data <- data %>%
+  mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'Freestar', 193, `Engine HP`))
+
+# i-MiEV
+#data %>% filter(Model == 'i-MiEV')
+# Both other i-MiEVs have 66 hp. This matches with research from edmunds.com
+data <- data %>%
+  mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'i-MiEV', 66, `Engine HP`))
+
+# M-Class
+#data %>% filter(Model == 'M-Class')
+# All other diesel models have 240 horsepower.
+data <- data %>%
+  mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'M-Class', 240, `Engine HP`))
+
+# MKZ
+#data %>% filter(Model == 'MKZ')
+# All other MKZ with Luxury,Hybrid Market Categories have 188 HP.
+data <- data %>%
+  mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'MKZ', 188, `Engine HP`))
+
+# RAV4 EV
+#data %>% filter(Model == 'RAV4 EV')
+# All other RAV4 EV models have 154 horsepower. This matches with research from edmunds.com
+data <- data %>%
+  mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'RAV4 EV', 154, `Engine HP`))
+
+# All other missing values were fixed with additional research. For instance, the Tesla Model S missing values had varying MSRP's, so trim levels had to be researched to find specific HP values. These remaining null values have already been imputed into the dataset before loading in.
 ```
 
 ```{r}
@@ -69,4 +108,46 @@ data <- data %>%
 data <- data %>%
   mutate(`Number of Doors` = ifelse(is.na(`Number of Doors`),
                                     ifelse(Model == 'FF', 2 ,4), `Number of Doors`))
+```
+
+```{r}
+# Last check for Nulls
+anyNA(data)
+```
+
+```{r}
+library(relaimpo)
+
+# Fit most accurate regression model for MSRP (can just use LASSO or stepwise selection)
+
+# Determine the most important variables - Using the 6 methods below
+# last, first, betasq, pratt, genizi, car
+last <- calc.relimp(step_attrition, type=c('last'), rela=TRUE)
+first <- calc.relimp(step_attrition, type=c('first'), rela=TRUE)
+betasq <- calc.relimp(step_attrition, type=c('betasq'), rela=TRUE)
+pratt <- calc.relimp(step_attrition, type=c('pratt'), rela=TRUE)
+genizi <- calc.relimp(step_attrition, type=c('genizi'), rela=TRUE)
+car <- calc.relimp(step_attrition, type=c('car'), rela=TRUE)
+
+# Creating dataframe of results
+RelaImpo_Ranks <- data.frame(
+  'Last' = last$last,
+  'LastRank' = last$last.rank,
+  'First' = first$first,
+  'FirstRank' = first$first.rank,
+  'Betasq' = betasq$betasq,
+  'BetasqRank' = betasq$betasq.rank,
+  'Pratt' = pratt$pratt,
+  'PrattRank' = pratt$pratt.rank,
+  'Genizi' = genizi$genizi,
+  'GeniziRank' = genizi$genizi.rank,
+  'Car' = car$car,
+  'CarRank' = car$car.rank
+)
+
+# Creating Average Rank Column
+RelaImpo_Ranks <- RelaImpo_Ranks %>% mutate(
+  AverageRank = (LastRank+FirstRank+BetasqRank+PrattRank+GeniziRank+CarRank) / 6
+)
+
 ```
