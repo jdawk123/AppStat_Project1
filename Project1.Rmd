@@ -97,12 +97,10 @@ data <- data %>% mutate(`Engine HP` = ifelse(is.na(`Engine HP`) & Model == 'Leaf
 #data %>% filter(is.na(`Engine Cylinders`))
 
 # All electric cars have 0 cylinders
-data <- data %>%
-  mutate(`Engine Cylinders` = ifelse(`Engine Fuel Type` == 'electric', 0, `Engine Cylinders`))
+data <- data %>% mutate(`Engine Cylinders` = ifelse(`Engine Fuel Type` == 'electric', 0, `Engine Cylinders`))
 
 # Google says that all the remaining cars (RX-7 '93-'95, RX-8 '09-'11) have 2 cylinders
-data <- data %>%
-  mutate(`Engine Cylinders` = ifelse(is.na(`Engine Cylinders`), 2, `Engine Cylinders`))
+data <- data %>% mutate(`Engine Cylinders` = ifelse(is.na(`Engine Cylinders`), 2, `Engine Cylinders`))
 ```
 
 ```{r}
@@ -117,8 +115,266 @@ data <- data %>%
 ```
 
 ```{r}
+# UNKNOWN Transmission Types
+#data %>% filter(`Transmission Type` == 'UNKNOWN')
+
+# 5 models...
+
+#data %>% filter(Make == 'Oldsmobile' & Model == 'Achieva') # MANUAL ---- look at Engine Cylinders
+data <- data %>% mutate(`Transmission Type` = 
+                          ifelse(`Transmission Type`=='UNKNOWN' & Model == 'Achieva', 'MANUAL', `Transmission Type`))
+
+#data %>% filter(Make == 'Pontiac' & Model == 'Firebird') # MANUAL ---- look at Engine Fuel Type
+data <- data %>% mutate(`Transmission Type` = 
+                          ifelse(`Transmission Type`=='UNKNOWN' & Model == 'Firebird', 'MANUAL', `Transmission Type`))
+
+#data %>% filter(Make == 'GMC' & Model == 'Jimmy') # MANUAL ---- all manuals are compact, autos are midsize
+data <- data %>% mutate(`Transmission Type` = 
+                          ifelse(`Transmission Type`=='UNKNOWN' & Model == 'Jimmy', 'MANUAL', `Transmission Type`))
+
+#data %>% filter(Make == 'Chrysler' & Model == 'Le Baron') # AUTOMATIC
+data <- data %>% mutate(`Transmission Type` = 
+                          ifelse(`Transmission Type`=='UNKNOWN' & Model == 'Le Baron', 'AUTOMATIC', `Transmission Type`))
+
+#data %>% filter(Make == 'Dodge' & Model == 'RAM 150') # MANUAL
+data <- data %>% mutate(`Transmission Type` = 
+                          ifelse(`Transmission Type`=='UNKNOWN' & Model == 'RAM 150', 'MANUAL', `Transmission Type`))
+```
+
+```{r}
 # Last check for Nulls
 anyNA(data)
+```
+
+```{r}
+library(stringr)
+# Market Category consolidation
+unique(data$`Market Category`)
+# Create one-hot variables for: Exotic, Luxury, Performance, High-Performance
+# Other categories: Flex Fuel, Hatchback, Crossover, Factory Tuner, Diesel, Hybrid
+
+
+# Imputing those missing Market Categories is unfeasible. So, consolidating their most distinct factors into
+# one-hot encoded variables may be easier to deal with. However, how do we impute 'Exotic' or 'Luxury' for the
+# models with Market Categories? Knn / Logistic Regression may be the route to take here. Exploration for Exotic, Luxury,
+# Performance, and High-Performance are found below
+
+# The other categories are odd to me. Flex Fuel, Diesel, and Hybrid all have multiple different 'Engine Fuel Types', so I'm # not sure how we could impute that.
+
+# Exotic Exploration
+e <- data %>% filter(str_detect(`Market Category`, 'Exotic'))
+ne <- data %>% filter(str_detect(`Market Category`, 'Exotic') == FALSE & `Market Category` != 'N/A')
+
+e$Exotic = 1
+ne$Exotic = 0
+
+ene <- rbind(e, ne)
+
+ggplot(ene, aes(x=`Engine HP`, y=as.factor(Exotic), fill=as.factor(Exotic))) + geom_boxplot()
+ggplot(ene, aes(x=MSRP, y=as.factor(Exotic), fill=as.factor(Exotic))) + geom_boxplot()
+ggplot(ene, aes(x=MSRP, y=`Engine HP`, color=as.factor(Exotic))) + geom_point() + xlim(0, 750000) + ylim(0, 800)
+
+# Could go for a risky classifier such as MSRP > 100000 & Engine HP > 400 --> Exotic, but we may have better success
+# with a basic Knn model
+```
+
+```{r}
+# Luxury Exploration
+l <- data %>% filter(str_detect(`Market Category`, 'Luxury'))
+nl <- data %>% filter(str_detect(`Market Category`, 'Luxury') == FALSE & `Market Category` != 'N/A')
+
+l$Luxury = 1
+nl$Luxury = 0
+
+lnl <- rbind(l, nl)
+
+ggplot(lnl, aes(x=`Engine HP`, y=as.factor(Luxury), fill=as.factor(Luxury))) + geom_boxplot()
+ggplot(lnl, aes(x=MSRP, y=as.factor(Luxury), fill=as.factor(Luxury))) + geom_boxplot()
+ggplot(lnl, aes(x=MSRP, y=`Engine HP`, color=as.factor(Luxury))) + geom_point() + xlim(0, 750000) + ylim(0, 800)
+
+# Similar situation to Exotic
+```
+
+```{r}
+# Performance / High-Performance Exploration
+p <- data %>% filter(str_detect(`Market Category`, '^Performance') | str_detect(`Market Category`, ',Performance'))
+hp <- data %>% filter(str_detect(`Market Category`, 'High-Performance'))
+np <- data %>% filter(str_detect(`Market Category`, 'Performance') == FALSE & `Market Category` != 'N/A')
+
+p$Performance = 1
+hp$Performance = 2
+np$Performance = 0
+
+php <- rbind(p, hp, np)
+
+ggplot(php, aes(x=`Engine HP`, y=as.factor(Performance), fill=as.factor(Performance))) + geom_boxplot()
+ggplot(php, aes(x=MSRP, y=as.factor(Performance), fill=as.factor(Performance))) + geom_boxplot() + xlim(0, 750000)
+ggplot(php, aes(x=MSRP, y=`Engine HP`, color=as.factor(Performance))) + geom_point() + xlim(0, 750000) + ylim(0, 800)
+
+# This one is a little more complicated because of the 3 levels. Could consolidate performance/high-performance or separate # them into 2 one-hot variables
+```
+
+```{r}
+# Correlation Matrix
+library(corrplot)
+
+data_num <- dplyr::select_if(data, is.numeric)
+
+res <- cor(data_num)
+round(res, 2)
+
+corrplot(res, method='number', type = "upper", order = "hclust", tl.col = "black", tl.srt = 45)
+
+# Remove city mpg & Engine Cylinders
+```
+
+```{r}
+# Summary Stats Table
+library(vtable)
+st(data_num)
+```
+
+```{r}
+# MSRP and Popularity
+cor(data$MSRP, data$Popularity)
+
+ggplot(data, aes(x=MSRP, y=Popularity)) + 
+  geom_point(color='black') + 
+  labs(x='Retail Price (MSRP)', title='MSRP vs. Popularity')
+
+# Really seems like there's nothing overarching here. The Popularity variable needs to be remade (we can talk about this in # the paper)
+```
+
+```{r}
+# Because Make, Model, and Market Category have many dimensions and a lot of variance, we will not include these in the regression
+
+data_1 <- data[-c(1,2,10)]
+
+# Change Character fields into dummies
+char_data_1 <- data_1 %>% select_if(is.character)
+char_col_names <- colnames(char_data_1)
+data_1 <- dummy_cols(data_1, select_columns= char_col_names, remove_selected_columns=TRUE)
+
+# Creating a new dataset with logged independent variables
+data_1_log <- data_1 %>% dplyr::select(-c(MSRP))
+
+# Can't take log of 0, so I will add 1 to every value (https://discuss.analyticsvidhya.com/t/methods-to-deal-with-zero-values-while-performing-log-transformation-of-variable/2431/5)
+data_1_log <- data_1_log + 1
+
+# Take the log
+data_1_log <- log(data_1_log)
+
+# Add in raw respone variable
+data_1_log$MSRP <- data_1$MSRP
+
+# Split non-log into train and test
+idx <- sample(seq(1, 2), size = nrow(data_1), replace = TRUE, prob = c(.8, .2))
+train <- data_1[idx == 1,]
+test <- data_1[idx == 2,]
+
+# Split log into train and test
+idx_log <- sample(seq(1, 2), size = nrow(data_1_log), replace = TRUE, prob = c(.8, .2))
+train_log <- data_1_log[idx_log == 1,]
+test_log <- data_1_log[idx_log == 2,]
+
+# MODEL 1: RAW VS RAW---------------------------------------------------------------------------------------------------
+fit <- lm(MSRP ~ ., train)
+summary(fit)
+par(mfrow=c(2,2))
+plot(fit)
+# Doesn't pass equal variance or linearity assumptions
+
+# MODEL 2: LOG VS RAW---------------------------------------------------------------------------------------------------
+fit_logMSRP <- lm(log(MSRP) ~ ., train)
+summary(fit_logMSRP)
+par(mfrow=c(2,2))
+plot(fit_logMSRP)
+# Assumptions are better, but they could improve still (not passable)
+
+# MODEL 3: RAW VS LOG---------------------------------------------------------------------------------------------------
+fit_logTrain <- lm(MSRP ~ ., train_log)
+summary(fit_logTrain)
+par(mfrow=c(2,2))
+plot(fit_logTrain)
+# Looks very similar to the raw model. Assumptions do not pass
+
+# MODEL 4: LOG VS LOG---------------------------------------------------------------------------------------------------
+fit_logAll <- lm(log(MSRP+1) ~ ., train_log)
+summary(fit_logAll)
+par(mfrow=c(2,2))
+plot(fit_logAll)
+# This looks significantly better than fit_logMSRP, but we may have to remove cook's d outliers
+
+# USING MODEL 4 FROM HERE ON--------------------------------------------------------------------------------------------
+
+# Find cooksd outliers
+cooksd <- cooks.distance(fit_logAll)
+influential <- as.numeric(names(cooksd)[(cooksd > (4/nrow(train_log)))])
+influential <- na.omit(influential)
+
+# Remove outliers
+train_log_noCookds <- train_log[-influential, ]
+
+fit_logAll <- lm(log(MSRP+1) ~ ., train_log_noCookds)
+summary(fit_logAll)
+par(mfrow=c(2,2))
+plot(fit_logAll)
+# This looks the best so far. Still do not love the equal variance assumption - will need to do feature selection
+
+# glmnet feature selection (this can be saved for objective 2)
+x<-model.matrix(log(MSRP+1)~.,data=train_log_noCookds)
+
+glmnet1<-cv.glmnet(x=x,y=train_log_noCookds$MSRP,type.measure='mse',nfolds=5,alpha=.5)
+
+c<-coef(glmnet1,s='lambda.min',exact=TRUE)
+inds<-which(c!=0)
+variables<-row.names(c)[inds]
+
+'%!in%' <- function(x,y)!('%in%'(x,y))
+variables<-variables[variables %!in% '(Intercept)']
+variables
+```
+
+```{r}
+# Split into train, test, validate
+idx <- sample(seq(1, 3), size = nrow(data1), replace = TRUE, prob = c(.8, .1, .1))
+train <- data[idx == 1,]
+test <- data[idx == 2,]
+val <- data[idx == 3,]
+```
+
+```{r}
+# All unfinished code from here on out --- just some LASSO starts
+
+
+# Model Creation and LASSO
+library(glmnet)
+
+#x=model.matrix(AvgWinnings~.,train)[,-1]
+#y=log(train$AvgWinnings)
+x = model.matrix(MSRP~., train)[,-1]
+y = log(train$MSRP)
+
+#xtest<-model.matrix(AvgWinnings~.,test)[,-1]
+#ytest<-log(test$AvgWinnings)
+xtest = model.matrix(MSRP~., test)[,-1]
+ytest = log(test$MSRP)
+
+
+grid=10^seq(10,-2, length =100)
+lasso.mod=glmnet(x,y,alpha=1, lambda =grid)
+
+cv.out=cv.glmnet(x,y,alpha=1) #alpha=1 performs LASSO
+plot(cv.out)
+bestlambda<-cv.out$lambda.min #Optimal penalty parameter.  You can make this call visually.
+
+best_model <- glmnet(x, y, alpha = 1, lambda = bestlambda)
+coef(best_model)
+
+lasso.pred=predict (best_model ,s=bestlambda ,newx=xtest)
+
+testMSE_LASSO<-mean((ytest-lasso.pred)^2)
+testMSE_LASSO
 ```
 
 ```{r}
@@ -128,12 +384,12 @@ library(relaimpo)
 
 # Determine the most important variables - Using the 6 methods below
 # last, first, betasq, pratt, genizi, car
-last <- calc.relimp(step_attrition, type=c('last'), rela=TRUE)
-first <- calc.relimp(step_attrition, type=c('first'), rela=TRUE)
-betasq <- calc.relimp(step_attrition, type=c('betasq'), rela=TRUE)
-pratt <- calc.relimp(step_attrition, type=c('pratt'), rela=TRUE)
-genizi <- calc.relimp(step_attrition, type=c('genizi'), rela=TRUE)
-car <- calc.relimp(step_attrition, type=c('car'), rela=TRUE)
+last <- calc.relimp(fit, type=c('last'), rela=TRUE)
+first <- calc.relimp(fit, type=c('first'), rela=TRUE)
+betasq <- calc.relimp(fit, type=c('betasq'), rela=TRUE)
+pratt <- calc.relimp(fit, type=c('pratt'), rela=TRUE)
+genizi <- calc.relimp(fit, type=c('genizi'), rela=TRUE)
+car <- calc.relimp(fit, type=c('car'), rela=TRUE)
 
 # Creating dataframe of results
 RelaImpo_Ranks <- data.frame(
@@ -155,5 +411,7 @@ RelaImpo_Ranks <- data.frame(
 RelaImpo_Ranks <- RelaImpo_Ranks %>% mutate(
   AverageRank = (LastRank+FirstRank+BetasqRank+PrattRank+GeniziRank+CarRank) / 6
 )
+
+RelaImpo_Ranks
 
 ```
