@@ -16,6 +16,12 @@ library(car)
 library(olsrr)
 library(MASS)
 library(qpcR)
+library(class)
+library(caret)
+library(rpart)
+library(rpart.plot)
+library(e1071)
+library(stringr)
 ```
 
 ```{r}
@@ -147,71 +153,359 @@ anyNA(data)
 ```
 
 ```{r}
-library(stringr)
-# Market Category consolidation
-unique(data$`Market Category`)
-# Create one-hot variables for: Exotic, Luxury, Performance, High-Performance
+# ID Column Creation
+data$ID <- 1:nrow(data)
+
+# In the next few cells, we will be splitting up data and assigning new variables. To successfully add these new variables to 'data', we must preserve an id column.
+```
+
+```{r}
+# Market Category consolidation ------------------------------------------------------------------------------------------
+
+# Target Categories: Exotic, Luxury, Performance, High-Performance
 # Other categories: Flex Fuel, Hatchback, Crossover, Factory Tuner, Diesel, Hybrid
 
+# We won't be able to impute the pure Market Categories. So, how can we keep some of this information?
+# Exotic/Luxury/Performance stand out to me as the most important categories
+# The other categories should have their information accounted for in other variables (Engine Fuel Type, Vehicle Style)
 
-# Imputing those missing Market Categories is unfeasible. So, consolidating their most distinct factors into
-# one-hot encoded variables may be easier to deal with. However, how do we impute 'Exotic' or 'Luxury' for the
-# models with Market Categories? Knn / Logistic Regression may be the route to take here. Exploration for Exotic, Luxury,
-# Performance, and High-Performance are found below
+# Below are code cells exploring **EXOTIC**, **LUXURY**, AND **PERFORMANCE/HIGH-PERFORMANCE**.
+# In short:
+#       Naive-Bayes can predict **EXOTIC** will good accuracy, so I've used that for now.
+#       No ML models can classify **LUXURY**, so I used Make-specific approaches to fill in the N/As.
+#       **PERFORMANCE** appears too obscure to classify with models or Make-specific approaches.
+```
 
-# The other categories are odd to me. Flex Fuel, Diesel, and Hybrid all have multiple different 'Engine Fuel Types', so I'm # not sure how we could impute that.
-
-# Exotic Exploration
+```{r}
+# Exotic Exploration -----------------------------------------------------------------------------------------------------
 e <- data %>% filter(str_detect(`Market Category`, 'Exotic'))
 ne <- data %>% filter(str_detect(`Market Category`, 'Exotic') == FALSE & `Market Category` != 'N/A')
-
 e$Exotic = 1
 ne$Exotic = 0
-
 ene <- rbind(e, ne)
 
-ggplot(ene, aes(x=`Engine HP`, y=as.factor(Exotic), fill=as.factor(Exotic))) + geom_boxplot()
-ggplot(ene, aes(x=MSRP, y=as.factor(Exotic), fill=as.factor(Exotic))) + geom_boxplot()
-ggplot(ene, aes(x=MSRP, y=`Engine HP`, color=as.factor(Exotic))) + geom_point() + xlim(0, 750000) + ylim(0, 800)
+#ggplot(ene, aes(x=`Engine HP`, y=as.factor(Exotic), fill=as.factor(Exotic))) + geom_boxplot()
+#ggplot(ene, aes(x=MSRP, y=as.factor(Exotic), fill=as.factor(Exotic))) + geom_boxplot()
+#ggplot(ene, aes(x=MSRP, y=`Engine HP`, color=as.factor(Exotic))) + geom_point() + xlim(0, 750000) + ylim(0, 800)
 
-# Could go for a risky classifier such as MSRP > 100000 & Engine HP > 400 --> Exotic, but we may have better success
-# with a basic Knn model
+# Train / Test Split for Classifier Models -------------------------------------------------------------------------------
+idx <- sample(seq(1, 2), size = nrow(ene), replace = TRUE, prob = c(.8, .2))
+ene_train <- ene[idx == 1,]
+ene_test <- ene[idx == 2,]
+
+# Knn --------------------------------------------------------------------------------------------------------------------
+#classifications = knn(ene_train[,c(5,16)],ene_test[,c(5,16)],ene_train$Exotic, prob = TRUE, k = 5)
+#confusionMatrix(table(classifications,ene_test$Exotic))
+# ACC = 96.8 / SPE = 98.8 / SEN = 70.3 
+
+# Naive-Bayes ------------------------------------------------------------------------------------------------------------
+model = naiveBayes(ene_train[,c(5, 16)],ene_train$Exotic,laplace = 1)
+confusionMatrix(table(predict(model,ene_test[,c(5,16)]),ene_test$Exotic))
+# ACC = 96.3 / SPE = 96.9 / SEN = 87.3
+
+# Logistic Regression ----------------------------------------------------------------------------------------------------
+#log_reg <- glm(Exotic ~ `Engine HP` + MSRP,family=binomial(link='logit'),data=ene_train)
+#fitted.results <- predict(log_reg,newdata=ene_test,type='response')
+#confusionMatrix(table(ifelse(fitted.results > 0.5,1,0),ene_test$Exotic))
+# ACC = 97.5 / SPE = 99.5 / SEN = 71.2
+
+# Decision Tree ----------------------------------------------------------------------------------------------------------
+#fit <- rpart(Exotic ~ `Engine HP` + MSRP, data = ene_train, method = 'class')
+#confusionMatrix(table(predict(fit, ene_test, type = 'class'), ene_test$Exotic))
+# ACC = 98.1 / SPE = 99.3 / SEN = 82.2
+
+# ********************************************************************************************************************** #
+# Naive-Bayes looks like a solid option. Definitely usable if we want to go that route
+# ********************************************************************************************************************** #
+
+# Code to implement Exotic changes ---------------------------------------------------------------------------------------
+na_Exotic <- data %>% filter(`Market Category` == 'N/A')
+na_Exotic$Exotic <- predict(model, na_Exotic[,c(5,16)])
+total_Exotic <- rbind(ene, na_Exotic)
+total_Exotic <- total_Exotic %>% dplyr::select(ID, Exotic)
+data <- merge(data, total_Exotic, by='ID')
+data$Exotic <- as.numeric(data$Exotic)
 ```
 
 ```{r}
-# Luxury Exploration
+# Luxury Exploration -----------------------------------------------------------------------------------------------------
 l <- data %>% filter(str_detect(`Market Category`, 'Luxury'))
 nl <- data %>% filter(str_detect(`Market Category`, 'Luxury') == FALSE & `Market Category` != 'N/A')
-
 l$Luxury = 1
 nl$Luxury = 0
-
 lnl <- rbind(l, nl)
 
-ggplot(lnl, aes(x=`Engine HP`, y=as.factor(Luxury), fill=as.factor(Luxury))) + geom_boxplot()
-ggplot(lnl, aes(x=MSRP, y=as.factor(Luxury), fill=as.factor(Luxury))) + geom_boxplot()
-ggplot(lnl, aes(x=MSRP, y=`Engine HP`, color=as.factor(Luxury))) + geom_point() + xlim(0, 750000) + ylim(0, 800)
+#ggplot(lnl, aes(x=`Engine HP`, y=as.factor(Luxury), fill=as.factor(Luxury))) + geom_boxplot()
+#ggplot(lnl, aes(x=MSRP, y=as.factor(Luxury), fill=as.factor(Luxury))) + geom_boxplot()
+#ggplot(lnl, aes(x=MSRP, y=`Engine HP`, color=as.factor(Luxury))) + geom_point() + xlim(0, 750000) + ylim(0, 800)
 
-# Similar situation to Exotic
+# Train / Test Split for Classifier Models -------------------------------------------------------------------------------
+#idx <- sample(seq(1, 2), size = nrow(lnl), replace = TRUE, prob = c(.8, .2))
+#lnl_train <- lnl[idx == 1,]
+#lnl_test <- lnl[idx == 2,]
+
+# Knn --------------------------------------------------------------------------------------------------------------------
+#classifications = knn(lnl_train[,c(5,16)],lnl_test[,c(5,16)],lnl_train$Luxury, prob = TRUE, k = 5)
+#confusionMatrix(table(classifications,lnl_test$Luxury))
+# ACC = 78.7 / SPE = 81.0 / SEN = 75.2
+
+# Naive-Bayes ------------------------------------------------------------------------------------------------------------
+#model = naiveBayes(lnl_train[,c(5,16)],lnl_train$Luxury,laplace = 1)
+#confusionMatrix(table(predict(model,lnl_test[,c(5,16)]),lnl_test$Luxury))
+# ACC = 62.4 / SPE = 86.9 / SEN = 26.0
+
+# Logistic Regression ----------------------------------------------------------------------------------------------------
+#log_reg <- glm(Luxury ~ `Engine HP` + MSRP,family=binomial(link='logit'),data=lnl_train)
+#fitted.results <- predict(log_reg,newdata=lnl_test,type='response')
+#confusionMatrix(table(ifelse(fitted.results > 0.5,1,0),lnl_test$Luxury))
+# ACC = 61.2 / SPE = 85.9 / SEN = 24.5
+
+# Decision Tree ----------------------------------------------------------------------------------------------------------
+#fit <- rpart(Luxury ~ `Engine HP` + MSRP, data = lnl_train, method = 'class')
+#confusionMatrix(table(predict(fit, lnl_test, type = 'class'), lnl_test$Luxury))
+# ACC = 82.3 / SPE = 84.7 / SEN = 78.9
+
+# ********************************************************************************************************************** #
+# Decision Tree is the best predictor, but I'm still not happy with the results. We may be able to up that accuracy by
+# changing parameters, but a more tedious solution may be better (have luxury and non-luxury Makes with a MSRP threshold)
+# ********************************************************************************************************************** #
+
+# Further Luxury Exploration ---------------------------------------------------------------------------------------------
+'%!in%' <- function(x,y)!('%in%'(x,y))
+
+# Makes that only produce Luxury Cars
+lux_df <- data %>% filter(Make %in% l$Make & Make %!in% nl$Make) %>% group_by(Make) %>% summarize(n=n())
+lux_df$Extra <- numeric(nrow(lux_df))
+# Finding if there are 'N/A' Market Categories for cars within these Luxury Makes
+for(i in 1:nrow(lux_df)) {
+    row <- lux_df[i,]
+    lux_df$Extra[i] <- nrow(data%>%filter(Make==row$Make & `Market Category` == 'N/A'))
+    
+}
+#lux_df
+# ********************************************************************************************************************** #
+# There ARE NOT extra Luxury-make cars to classify
+# ********************************************************************************************************************** #
+
+
+# Non-Luxury Makes
+nolux_df <- data %>% filter(Make %in% nl$Make & Make %!in% l$Make) %>% group_by(Make) %>% summarize(n=n())
+nolux_df$Extra <- numeric(nrow(nolux_df))
+# Finding if there are 'N/A' Market Categories for cars within these Luxury Makes
+for(i in 1:nrow(nolux_df)) {
+    row <- nolux_df[i,]
+    nolux_df$Extra[i] <- nrow(data%>%filter(Make==row$Make & `Market Category` == 'N/A'))
+    
+}
+#nolux_df
+# ********************************************************************************************************************** #
+# There ARE extra Non-Luxury-make cars to classify
+# ********************************************************************************************************************** #
+
+# Luxury & Non-Luxury Makes
+nln_df <- data %>% filter(Make %in% l$Make & Make %in% nl$Make) %>% group_by(Make) %>% summarize(n=n())
+nln_df$Extra <- numeric(nrow(nln_df))
+# Finding if there are 'N/A' Market Categories for cars within these Luxury Makes
+for(i in 1:nrow(nln_df)) {
+    row <- nln_df[i,]
+    nln_df$Extra[i] <- nrow(data%>%filter(Make==row$Make & `Market Category` == 'N/A'))
+    
+}
+#nln_df
+# ********************************************************************************************************************** #
+# There ARE extra Combo-Luxury-make cars to classify
+# ********************************************************************************************************************** #
+
+
+# Numbers check -- All good ----------------------------------------------------------------------------------------------
+#sum(lux_df$Extra) + sum(nolux_df$Extra) + sum(nln_df$Extra)
+
+# How do cars from non-luxury Makes with 'N/A' Mark-Cat compare in MSRP to their fellow models with Luxury=0?-------------
+na_lux <- data %>% filter(`Market Category` == 'N/A')
+na_lux$Luxury = 2
+nanolux <- rbind(na_lux, lnl)
+nanolux %>% filter(Make %in% nolux_df$Make) %>%
+  ggplot(aes(x=MSRP, y=as.factor(Make), color=as.factor(Luxury))) + geom_point() + xlim(0, 750000) + facet_wrap(~Luxury)
+
+# ********************************************************************************************************************** #
+# ALL Non-Luxury-Make cars can be defined as Non-Luxury
+# ********************************************************************************************************************** #
+
+
+# How do cars from Lux&Non-Lux Makes with 'N/A' Mark-Cat compare in MSRP?-------------------------------------------------
+nanolux %>% filter(Make %in% nln_df$Make) %>%
+  ggplot(aes(x=MSRP, y=as.factor(Luxury), color=as.factor(Luxury))) + geom_point() + xlim(0, 150000) + facet_wrap(~Make)
+
+# Many of these seem pretty simple -- classify non-luxury -- Further research into Buick/Chevy/Chrysler/GMC---------------
+
+#nanolux %>% filter(Make == 'Buick' & MSRP < 20000) # Reatta's are Luxury, all others are Non-Luxury
+
+#nanolux %>% filter(Make == 'Chevrolet' & MSRP > 50000 & MSRP < 60000) # Only Luxury's are Tahoe Hybrids from 2013
+# Would feel comfortable making all N/A non-luxury
+
+#nanolux %>% filter(Make == 'Chrysler' & MSRP < 20000) # Similar to Chevy - only 1991 TC's are Luxury
+# Would feel comfortable making all N/A non-luxury
+
+#nanolux %>% filter(Make == 'GMC' & Luxury == 1) # Similar to Chevy - only <2013 Yukon's are Luxury
+# Would feel comfortable making all N/A non-luxury
+
+# ********************************************************************************************************************** #
+# For Combo-Luxury-Make cars, Hyundai/Kia/Toyota/VW cars are non-luxury. Other Makes have specific rules listed above.
+# ********************************************************************************************************************** #
+
+# Code to implement Luxury changes----------------------------------------------------------------------------------------
+nanolux <- nanolux %>% mutate(Luxury = ifelse(Luxury == 2 & Make %in% nolux_df$Make, 0, Luxury))
+nanolux <- nanolux %>% mutate(Luxury = ifelse(Luxury == 2 & Make == 'Buick' & Model == 'Reatta', 1, Luxury))
+nanolux <- nanolux %>% mutate(Luxury = ifelse(Luxury == 2 & Make == 'Buick', 0, Luxury))
+nanolux <- nanolux %>% mutate(Luxury = ifelse(Luxury == 2 & Make == 'Chevrolet', 0, Luxury))
+nanolux <- nanolux %>% mutate(Luxury = ifelse(Luxury == 2 & Make == 'Chrysler', 0, Luxury))
+nanolux <- nanolux %>% mutate(Luxury = ifelse(Luxury == 2 & Make == 'GMC', 0, Luxury))
+nanolux <- nanolux %>% mutate(Luxury = ifelse(Luxury == 2 & Make %in% c('Hyundai','Kia','Toyota','Volkswagen'),0,Luxury))
+
+nanolux <- nanolux %>% dplyr::select(Luxury, ID)
+data <- merge(data, nanolux, by='ID')
 ```
 
 ```{r}
-# Performance / High-Performance Exploration
-p <- data %>% filter(str_detect(`Market Category`, '^Performance') | str_detect(`Market Category`, ',Performance'))
-hp <- data %>% filter(str_detect(`Market Category`, 'High-Performance'))
-np <- data %>% filter(str_detect(`Market Category`, 'Performance') == FALSE & `Market Category` != 'N/A')
+# Quick Numbers & Optics Check (Should be 8332, 3081, 292, 209)
+data %>% group_by(Exotic, Luxury) %>% summarize(n=n())
+ggplot(data, aes(x=MSRP, y=`Engine HP`, color=as.factor(Exotic))) + geom_point() + xlim(0, 750000) + ylim(0, 800)
+ggplot(data, aes(x=MSRP, y=`Engine HP`, color=as.factor(Luxury))) + geom_point() + xlim(0, 750000) + ylim(0, 800)
+```
 
-p$Performance = 1
-hp$Performance = 2
-np$Performance = 0
+```{r}
+# Performance / High-Performance Exploration -----------------------------------------------------------------------------
 
-php <- rbind(p, hp, np)
+# Creating Performance Variable (3=No Information) -----------------------------------------------------------------------
+data <- data %>% mutate(Performance = 
+  case_when(
+  str_detect(`Market Category`, 'Performance') == FALSE & `Market Category` != 'N/A' ~ 0,
+  str_detect(`Market Category`, '^Performance') | str_detect(`Market Category`, ',Performance') ~ 1,
+  str_detect(`Market Category`, 'High-Performance') ~ 2,
+  TRUE ~ 3)
+)
 
-ggplot(php, aes(x=`Engine HP`, y=as.factor(Performance), fill=as.factor(Performance))) + geom_boxplot()
-ggplot(php, aes(x=MSRP, y=as.factor(Performance), fill=as.factor(Performance))) + geom_boxplot() + xlim(0, 750000)
-ggplot(php, aes(x=MSRP, y=`Engine HP`, color=as.factor(Performance))) + geom_point() + xlim(0, 750000) + ylim(0, 800)
+# We now must classify the 3's. Any classifying machine learning models I've tried have given me poor accuracy------------
+# So let's look at the distribution of performance groups for Makes with Performance=3 models
+makes <- unique(data$Make)
+class_makes <- character()
+for (i in 1:length(makes)) {
+  make = makes[i]
+  if (nrow(data%>%filter(Make==make&Performance==3)) > 0) {
+    class_makes <- append(class_makes, make)
+  }
+}
+
+# Visualize Data (In groups to increase legibility) ----------------------------------------------------------------------
+class_df_1 <- data %>% filter(Make %in% class_makes[0:5])
+class_df_2 <- data %>% filter(Make %in% class_makes[6:10])
+class_df_3 <- data %>% filter(Make %in% class_makes[11:14])
+class_df_4 <- data %>% filter(Make %in% class_makes[15:17])
+class_df_5 <- data %>% filter(Make %in% class_makes[18:21])
+ggplot(class_df_1, aes(x=MSRP, y=`Engine HP`, color=as.factor(Performance))) + geom_point() + 
+  xlim(0,70000) + ylim(0,450) + facet_wrap(~Make)
+ggplot(class_df_2, aes(x=MSRP, y=`Engine HP`, color=as.factor(Performance))) + geom_point() + 
+  xlim(0,100000) + ylim(0,475) + facet_wrap(~Make)
+ggplot(class_df_3, aes(x=MSRP, y=`Engine HP`, color=as.factor(Performance))) + geom_point() + 
+  xlim(0,75000) + ylim(0,500) + facet_wrap(~Make)
+ggplot(class_df_4, aes(x=MSRP, y=`Engine HP`, color=as.factor(Performance))) + geom_point() + 
+  xlim(0,70000) + ylim(0,450) + facet_wrap(~Make)
+ggplot(class_df_5, aes(x=MSRP, y=`Engine HP`, color=as.factor(Performance))) + geom_point() + 
+  xlim(0,100000) + ylim(0,450) + facet_wrap(~Make)
+
+# *Ignore the 'Removed X rows containing missing values' warnings...those are observations outside the axis limits
+# These outliers are already classified and consist overwhelmingly of High-Performance
+
+# At first glance, we could probably classify FIAT, GMC, Mitsubishi, Pontiac(?), Oldsmobile, Plymouth, Suzuki, Subaru, 
+# Buick, Scion, Volkswagen(?)
+
+# There are very few unidentified cars in the 'High-Performance' range, so I don't think combining 
+# Performance&High-Performance would help.
+
+# ********************************************************************************************************************** #
+# I think the question here is if we think other variables will help recoup some of the Performance information. In other
+# words, are we comfortable leaving out the Performance variable because the Engine HP / Cylinders / MPG information will
+# help distinguish performance groups.
+# ********************************************************************************************************************** #
+```
+
+```{r}
+# Useless code --- no models produce sufficient accuracy --- left it in here for y'all to look at if you need it
 
 # This one is a little more complicated because of the 3 levels. Could consolidate performance/high-performance or separate # them into 2 one-hot variables
+
+#idx <- sample(seq(1, 2), size = nrow(php), replace = TRUE, prob = c(.8, .2))
+#php_train <- php[idx == 1,]
+#php_test <- php[idx == 2,]
+
+# Knn
+#classifications = knn(php_train[,c(5,16)],php_test[,c(5,16)],php_train$Performance, prob = TRUE, k = 5)
+#confusionMatrix(table(classifications,php_test$Performance))
+
+# ACC = 65.1 / Print to see Spe/Sen
+
+# Naive-Bayes
+#model = naiveBayes(php_train[,c(5,16)],php_train$Performance,laplace = 1)
+#confusionMatrix(table(predict(model,php_test[,c(5,16)]),php_test$Performance))
+
+# ACC = 66.2 / Print to see Spe/Sen
+
+# Logistic Regression
+#log_reg <- glm(Performance ~ `Engine HP` + MSRP,family=binomial(link='logit'),data=php_train)
+#fitted.results <- predict(log_reg,newdata=php_test,type='response')
+#confusionMatrix(table(ifelse(fitted.results > 0.5,1,0),php_test$Performance))
+
+# Will not work in cases of >2 classes
+
+# Decision Tree
+#fit <- rpart(Performance ~ `Engine HP` + MSRP, data = php_train, method = 'class')
+#confusionMatrix(table(predict(fit, php_test, type = 'class'), php_test$Performance))
+
+# ACC = 73.8 / Print to see Spe/Sen
+
+# Having three classes here isn't going to work. I've tried a simple performance / non-performance variable below.
+
+# Performance / High-Performance Exploration - Combine Performance / High-Performance
+#p <- data %>% filter(str_detect(`Market Category`, 'Performance'))
+#np <- data %>% filter(str_detect(`Market Category`, 'Performance') == FALSE & `Market Category` != 'N/A')
+
+#p$Performance = 1
+#np$Performance = 0
+
+#pnp <- rbind(p, np)
+
+#ggplot(pnp, aes(x=`Engine HP`, y=as.factor(Performance), fill=as.factor(Performance))) + geom_boxplot()
+#ggplot(pnp, aes(x=MSRP, y=as.factor(Performance), fill=as.factor(Performance))) + geom_boxplot() + xlim(0, 750000)
+#ggplot(pnp, aes(x=MSRP, y=`Engine HP`, color=as.factor(Performance))) + geom_point() + xlim(0, 750000) + ylim(0, 800)
+
+# This one is a little more complicated because of the 3 levels. Could consolidate performance/high-performance or separate # them into 2 one-hot variables
+
+#idx <- sample(seq(1, 2), size = nrow(pnp), replace = TRUE, prob = c(.8, .2))
+#pnp_train <- pnp[idx == 1,]
+#pnp_test <- pnp[idx == 2,]
+
+# Knn
+#classifications = knn(pnp_train[,c(5,16)],pnp_test[,c(5,16)],pnp_train$Performance, prob = TRUE, k = 5)
+#confusionMatrix(table(classifications,pnp_test$Performance))
+# ACC = 70.8 / SEN = 77.8 / SPE = 61.9
+
+# Naive-Bayes
+#model = naiveBayes(pnp_train[,c(5,16)],pnp_train$Performance,laplace = 1)
+#confusionMatrix(table(predict(model,pnp_test[,c(5,16)]),pnp_test$Performance))
+# ACC = 68.9 / SEN = 96.3 / SPE = 33.9
+
+# Logistic Regression
+#log_reg <- glm(Performance ~ `Engine HP` + MSRP,family=binomial(link='logit'),data=pnp_train)
+#fitted.results <- predict(log_reg,newdata=pnp_test,type='response')
+#confusionMatrix(table(ifelse(fitted.results > 0.5,1,0),pnp_test$Performance))
+# ACC = 73.4 / SEN = 84.6 / SPE = 59.3
+
+# Decision Tree
+#fit <- rpart(Performance ~ `Engine HP` + MSRP, data = pnp_train, method = 'class')
+#confusionMatrix(table(predict(fit, pnp_test, type = 'class'), pnp_test$Performance))
+# ACC = 77.9 / SEN = 80.1 / SPE = 75.1
+
+# Similar results to Luxury with the Decision Tree. Again, may have to have Performance/Non-Performance Makes with an Engine HP threshold.
 ```
 
 ```{r}
