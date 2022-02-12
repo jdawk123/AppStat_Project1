@@ -235,10 +235,6 @@ l$Luxury = 1
 nl$Luxury = 0
 lnl <- rbind(l, nl)
 
-#ggplot(lnl, aes(x=`Engine HP`, y=as.factor(Luxury), fill=as.factor(Luxury))) + geom_boxplot()
-#ggplot(lnl, aes(x=MSRP, y=as.factor(Luxury), fill=as.factor(Luxury))) + geom_boxplot()
-#ggplot(lnl, aes(x=MSRP, y=`Engine HP`, color=as.factor(Luxury))) + geom_point() + xlim(0, 750000) + ylim(0, 800)
-
 # Train / Test Split for Classifier Models -------------------------------------------------------------------------------
 #idx <- sample(seq(1, 2), size = nrow(lnl), replace = TRUE, prob = c(.8, .2))
 #lnl_train <- lnl[idx == 1,]
@@ -374,141 +370,6 @@ ggplot(data, aes(x=MSRP, y=`Engine HP`, color=as.factor(Luxury))) + geom_point()
 ```
 
 ```{r}
-# Performance / High-Performance Exploration -----------------------------------------------------------------------------
-
-# Creating Performance Variable (3=No Information) -----------------------------------------------------------------------
-data <- data %>% mutate(Performance = 
-  case_when(
-  str_detect(`Market Category`, 'Performance') == FALSE & `Market Category` != 'N/A' ~ 0,
-  str_detect(`Market Category`, '^Performance') | str_detect(`Market Category`, ',Performance') ~ 1,
-  str_detect(`Market Category`, 'High-Performance') ~ 2,
-  TRUE ~ 3)
-)
-
-# We now must classify the 3's. Any classifying machine learning models I've tried have given me poor accuracy------------
-# So let's look at the distribution of performance groups for Makes with Performance=3 models
-makes <- unique(data$Make)
-class_makes <- character()
-for (i in 1:length(makes)) {
-  make = makes[i]
-  if (nrow(data%>%filter(Make==make&Performance==3)) > 0) {
-    class_makes <- append(class_makes, make)
-  }
-}
-
-# Visualize Data (In groups to increase legibility) ----------------------------------------------------------------------
-class_df_1 <- data %>% filter(Make %in% class_makes[0:5])
-class_df_2 <- data %>% filter(Make %in% class_makes[6:10])
-class_df_3 <- data %>% filter(Make %in% class_makes[11:14])
-class_df_4 <- data %>% filter(Make %in% class_makes[15:17])
-class_df_5 <- data %>% filter(Make %in% class_makes[18:21])
-ggplot(class_df_1, aes(x=MSRP, y=`Engine HP`, color=as.factor(Performance))) + geom_point() + 
-  xlim(0,70000) + ylim(0,450) + facet_wrap(~Make)
-ggplot(class_df_2, aes(x=MSRP, y=`Engine HP`, color=as.factor(Performance))) + geom_point() + 
-  xlim(0,100000) + ylim(0,475) + facet_wrap(~Make)
-ggplot(class_df_3, aes(x=MSRP, y=`Engine HP`, color=as.factor(Performance))) + geom_point() + 
-  xlim(0,75000) + ylim(0,500) + facet_wrap(~Make)
-ggplot(class_df_4, aes(x=MSRP, y=`Engine HP`, color=as.factor(Performance))) + geom_point() + 
-  xlim(0,70000) + ylim(0,450) + facet_wrap(~Make)
-ggplot(class_df_5, aes(x=MSRP, y=`Engine HP`, color=as.factor(Performance))) + geom_point() + 
-  xlim(0,100000) + ylim(0,450) + facet_wrap(~Make)
-
-# *Ignore the 'Removed X rows containing missing values' warnings...those are observations outside the axis limits
-# These outliers are already classified and consist overwhelmingly of High-Performance
-
-# At first glance, we could probably classify FIAT, GMC, Mitsubishi, Pontiac(?), Oldsmobile, Plymouth, Suzuki, Subaru, 
-# Buick, Scion, Volkswagen(?)
-
-# There are very few unidentified cars in the 'High-Performance' range, so I don't think combining 
-# Performance&High-Performance would help.
-
-# ********************************************************************************************************************** #
-# I think the question here is if we think other variables will help recoup some of the Performance information. In other
-# words, are we comfortable leaving out the Performance variable because the Engine HP / Cylinders / MPG information will
-# help distinguish performance groups.
-# ********************************************************************************************************************** #
-```
-
-```{r}
-# Useless code --- no models produce sufficient accuracy --- left it in here for y'all to look at if you need it
-
-# This one is a little more complicated because of the 3 levels. Could consolidate performance/high-performance or separate # them into 2 one-hot variables
-
-#idx <- sample(seq(1, 2), size = nrow(php), replace = TRUE, prob = c(.8, .2))
-#php_train <- php[idx == 1,]
-#php_test <- php[idx == 2,]
-
-# Knn
-#classifications = knn(php_train[,c(5,16)],php_test[,c(5,16)],php_train$Performance, prob = TRUE, k = 5)
-#confusionMatrix(table(classifications,php_test$Performance))
-
-# ACC = 65.1 / Print to see Spe/Sen
-
-# Naive-Bayes
-#model = naiveBayes(php_train[,c(5,16)],php_train$Performance,laplace = 1)
-#confusionMatrix(table(predict(model,php_test[,c(5,16)]),php_test$Performance))
-
-# ACC = 66.2 / Print to see Spe/Sen
-
-# Logistic Regression
-#log_reg <- glm(Performance ~ `Engine HP` + MSRP,family=binomial(link='logit'),data=php_train)
-#fitted.results <- predict(log_reg,newdata=php_test,type='response')
-#confusionMatrix(table(ifelse(fitted.results > 0.5,1,0),php_test$Performance))
-
-# Will not work in cases of >2 classes
-
-# Decision Tree
-#fit <- rpart(Performance ~ `Engine HP` + MSRP, data = php_train, method = 'class')
-#confusionMatrix(table(predict(fit, php_test, type = 'class'), php_test$Performance))
-
-# ACC = 73.8 / Print to see Spe/Sen
-
-# Having three classes here isn't going to work. I've tried a simple performance / non-performance variable below.
-
-# Performance / High-Performance Exploration - Combine Performance / High-Performance
-#p <- data %>% filter(str_detect(`Market Category`, 'Performance'))
-#np <- data %>% filter(str_detect(`Market Category`, 'Performance') == FALSE & `Market Category` != 'N/A')
-
-#p$Performance = 1
-#np$Performance = 0
-
-#pnp <- rbind(p, np)
-
-#ggplot(pnp, aes(x=`Engine HP`, y=as.factor(Performance), fill=as.factor(Performance))) + geom_boxplot()
-#ggplot(pnp, aes(x=MSRP, y=as.factor(Performance), fill=as.factor(Performance))) + geom_boxplot() + xlim(0, 750000)
-#ggplot(pnp, aes(x=MSRP, y=`Engine HP`, color=as.factor(Performance))) + geom_point() + xlim(0, 750000) + ylim(0, 800)
-
-# This one is a little more complicated because of the 3 levels. Could consolidate performance/high-performance or separate # them into 2 one-hot variables
-
-#idx <- sample(seq(1, 2), size = nrow(pnp), replace = TRUE, prob = c(.8, .2))
-#pnp_train <- pnp[idx == 1,]
-#pnp_test <- pnp[idx == 2,]
-
-# Knn
-#classifications = knn(pnp_train[,c(5,16)],pnp_test[,c(5,16)],pnp_train$Performance, prob = TRUE, k = 5)
-#confusionMatrix(table(classifications,pnp_test$Performance))
-# ACC = 70.8 / SEN = 77.8 / SPE = 61.9
-
-# Naive-Bayes
-#model = naiveBayes(pnp_train[,c(5,16)],pnp_train$Performance,laplace = 1)
-#confusionMatrix(table(predict(model,pnp_test[,c(5,16)]),pnp_test$Performance))
-# ACC = 68.9 / SEN = 96.3 / SPE = 33.9
-
-# Logistic Regression
-#log_reg <- glm(Performance ~ `Engine HP` + MSRP,family=binomial(link='logit'),data=pnp_train)
-#fitted.results <- predict(log_reg,newdata=pnp_test,type='response')
-#confusionMatrix(table(ifelse(fitted.results > 0.5,1,0),pnp_test$Performance))
-# ACC = 73.4 / SEN = 84.6 / SPE = 59.3
-
-# Decision Tree
-#fit <- rpart(Performance ~ `Engine HP` + MSRP, data = pnp_train, method = 'class')
-#confusionMatrix(table(predict(fit, pnp_test, type = 'class'), pnp_test$Performance))
-# ACC = 77.9 / SEN = 80.1 / SPE = 75.1
-
-# Similar results to Luxury with the Decision Tree. Again, may have to have Performance/Non-Performance Makes with an Engine HP threshold.
-```
-
-```{r}
 # Correlation Matrix
 library(corrplot)
 
@@ -520,6 +381,8 @@ round(res, 2)
 corrplot(res, method='number', type = "upper", order = "hclust", tl.col = "black", tl.srt = 45)
 
 # Remove city mpg & Engine Cylinders
+drops <- c("city mpg","Engine Cylinders")
+data <- data[ , !(names(data) %in% drops)]
 ```
 
 ```{r}
@@ -540,172 +403,285 @@ ggplot(data, aes(x=MSRP, y=Popularity)) +
 ```
 
 ```{r}
-# Because Make, Model, and Market Category have many dimensions and a lot of variance, we will not include these in the regression
+# Switch 'Year' to 'Age' --------------------------------------------------------------------------------------------------
+data$Age <- 2022 - data$Year
 
-data_1 <- data[-c(1,2,10)]
-
-# Change Character fields into dummies
-char_data_1 <- data_1 %>% select_if(is.character)
-char_col_names <- colnames(char_data_1)
-data_1 <- dummy_cols(data_1, select_columns= char_col_names, remove_selected_columns=TRUE)
-
-# Creating a new dataset with logged independent variables
-data_1_log <- data_1 %>% dplyr::select(-c(MSRP))
-
-# Can't take log of 0, so I will add 1 to every value (https://discuss.analyticsvidhya.com/t/methods-to-deal-with-zero-values-while-performing-log-transformation-of-variable/2431/5)
-data_1_log <- data_1_log + 1
-
-# Take the log
-data_1_log <- log(data_1_log)
-
-# Add in raw respone variable
-data_1_log$MSRP <- data_1$MSRP
-
-# Split non-log into train and test
-idx <- sample(seq(1, 2), size = nrow(data_1), replace = TRUE, prob = c(.8, .2))
-train <- data_1[idx == 1,]
-test <- data_1[idx == 2,]
-
-# Split log into train and test
-idx_log <- sample(seq(1, 2), size = nrow(data_1_log), replace = TRUE, prob = c(.8, .2))
-train_log <- data_1_log[idx_log == 1,]
-test_log <- data_1_log[idx_log == 2,]
-
-# MODEL 1: RAW VS RAW---------------------------------------------------------------------------------------------------
-fit <- lm(MSRP ~ ., train)
-summary(fit)
-par(mfrow=c(2,2))
-plot(fit)
-# Doesn't pass equal variance or linearity assumptions
-
-# MODEL 2: LOG VS RAW---------------------------------------------------------------------------------------------------
-fit_logMSRP <- lm(log(MSRP) ~ ., train)
-summary(fit_logMSRP)
-par(mfrow=c(2,2))
-plot(fit_logMSRP)
-# Assumptions are better, but they could improve still (not passable)
-
-# MODEL 3: RAW VS LOG---------------------------------------------------------------------------------------------------
-fit_logTrain <- lm(MSRP ~ ., train_log)
-summary(fit_logTrain)
-par(mfrow=c(2,2))
-plot(fit_logTrain)
-# Looks very similar to the raw model. Assumptions do not pass
-
-# MODEL 4: LOG VS LOG---------------------------------------------------------------------------------------------------
-fit_logAll <- lm(log(MSRP+1) ~ ., train_log)
-summary(fit_logAll)
-par(mfrow=c(2,2))
-plot(fit_logAll)
-# This looks significantly better than fit_logMSRP, but we may have to remove cook's d outliers
-
-# USING MODEL 4 FROM HERE ON--------------------------------------------------------------------------------------------
-
-# Find cooksd outliers
-cooksd <- cooks.distance(fit_logAll)
-influential <- as.numeric(names(cooksd)[(cooksd > (4/nrow(train_log)))])
-influential <- na.omit(influential)
-
-# Remove outliers
-train_log_noCookds <- train_log[-influential, ]
-
-fit_logAll <- lm(log(MSRP+1) ~ ., train_log_noCookds)
-summary(fit_logAll)
-par(mfrow=c(2,2))
-plot(fit_logAll)
-# This looks the best so far. Still do not love the equal variance assumption - will need to do feature selection
-
-# glmnet feature selection (this can be saved for objective 2)
-x<-model.matrix(log(MSRP+1)~.,data=train_log_noCookds)
-
-glmnet1<-cv.glmnet(x=x,y=train_log_noCookds$MSRP,type.measure='mse',nfolds=5,alpha=.5)
-
-c<-coef(glmnet1,s='lambda.min',exact=TRUE)
-inds<-which(c!=0)
-variables<-row.names(c)[inds]
-
-'%!in%' <- function(x,y)!('%in%'(x,y))
-variables<-variables[variables %!in% '(Intercept)']
-variables
-```
-
-```{r}
-# Split into train, test, validate
-idx <- sample(seq(1, 3), size = nrow(data1), replace = TRUE, prob = c(.8, .1, .1))
+# 80/20 Train/Test Split for Objective 1 ----------------------------------------------------------------------------------
+idx <- sample(seq(1, 2), size = nrow(data), replace = TRUE, prob = c(.8, .2))
 train <- data[idx == 1,]
 test <- data[idx == 2,]
-val <- data[idx == 3,]
+
+# Simple, handmade regression model ---------------------------------------------------------------------------------------
+model <- lm(log(MSRP) ~ 
+              Age + 
+              `Engine HP` + 
+              `highway MPG` + 
+              Popularity + 
+              Exotic + 
+              Luxury, data=train)
+summary(model)
+par(mfrow=c(2,2))
+plot(model)
+
+ggplot(train, aes(x=model$residuals)) + geom_histogram(fill='red', color='black') + stat_function(fun = dnorm, args = list(mean = mean(model$residuals), sd = sd(model$residuals))) + labs(title='Residual Histogram')
+
+test$MSRP_predictions <- predict(model, newdata=test)
+test$MSRP_predictions <- exp(test$MSRP_predictions)
+
+test$Diff <- abs(test$MSRP-test$MSRP_predictions)
+
+AvgDiff <- round(mean(test$Diff),2)
+AvgDiffPerc <- round(100*(AvgDiff / mean(test$MSRP)),2)
+
+ggplot(test, aes(x=MSRP, y=MSRP_predictions, color=Diff)) + 
+  geom_point() + 
+  geom_abline(slope=1, intercept=0, color='red') +
+  annotate(geom='text', label=paste('Avg Error -- $', AvgDiff, sep=''), x=400000, y=500000) +
+  annotate(geom='text', label=paste('Avg Error Rate -- ', AvgDiffPerc, '%', sep=''),x=400000, y=470000) +
+  labs(y='Predicted MSRP', title='Actual vs. Predicted MSRP', x='Actual MSRP') + xlim(0, 500000) + ylim(0, 500000)
 ```
 
 ```{r}
-# All unfinished code from here on out --- just some LASSO starts
+# Using Stepwise Selection - Same Process ---------------------------------------------------------------------------------
 
+# Because Make, Model, & Market Category have many dimensions and lots of variance, we will not include these in the regression
+# Also removing Year because Age is more interpretable
+data_reg <- data[-c(2, 3, 4, 10)]
 
-# Model Creation and LASSO
+# Change Character fields into dummies
+char_data_reg <- data_reg %>% select_if(is.character)
+char_col_names <- colnames(char_data_reg)
+data_reg <- dummy_cols(data_reg, select_columns= char_col_names, remove_selected_columns=TRUE)
+
+# 80/20 Train/Test Split for Objective 1 ----------------------------------------------------------------------------------
+idx <- sample(seq(1, 2), size = nrow(data_reg), replace = TRUE, prob = c(.8, .2))
+train <- data_reg[idx == 1,]
+test <- data_reg[idx == 2,]
+
+# Build Initial Model (Log MSRP) ------------------------------------------------------------------------------------------
+model2 <- lm(log(MSRP) ~ .-ID, data=train)
+summary(model2)
+
+# Stepwise Selection ------------------------------------------------------------------------------------------------------
+model2_step <- stepAIC(model2, direction='both')
+summary(model2_step)
+
+# Model2_step Selection ---------------------------------------------------------------------------------------------------
+par(mfrow=c(2,2))
+plot(model2_step)
+ggplot(train, aes(x=model2_step$residuals)) + geom_histogram(fill='red', color='black') + stat_function(fun = dnorm, args = list(mean = mean(model2_step$residuals), sd = sd(model2_step$residuals))) + labs(title='Residual Histogram')
+
+# Making Predictions ------------------------------------------------------------------------------------------------------
+test$MSRP_predictions <- predict(model2_step, newdata=test)
+test$MSRP_predictions <- exp(test$MSRP_predictions)
+
+test$Diff <- abs(test$MSRP-test$MSRP_predictions)
+
+AvgDiff <- round(mean(test$Diff),2)
+AvgDiffPerc <- round(100*(AvgDiff / mean(test$MSRP)),2)
+
+# Plot Differences --------------------------------------------------------------------------------------------------------
+ggplot(test, aes(x=MSRP, y=MSRP_predictions, color=Diff)) + 
+  geom_point() + 
+  geom_abline(slope=1, intercept=0, color='red') +
+  annotate(geom='text', label=paste('Avg Error -- $', AvgDiff, sep=''), x=100000, y=500000) +
+  annotate(geom='text', label=paste('Avg Error Rate -- %', AvgDiffPerc, sep=''),x=100000, y=470000) +
+  labs(y='Predicted MSRP', title='Actual vs. Predicted MSRP', x='Actual MSRP') +
+  xlim(0, 600000) + ylim(0, 600000)
+```
+
+```{r}
 library(glmnet)
+# Train, Test, Validate split --------------------------------------------------------------------------------------------
+set.seed(1234)
+index = sample(seq(1,3),size = nrow(data),replace = TRUE,prob = c(0.8,0.1,0.1))
+train = data[index==1,]
+test = data[index==2,]
+validate = data[index==3,]
 
-#x=model.matrix(AvgWinnings~.,train)[,-1]
-#y=log(train$AvgWinnings)
-x = model.matrix(MSRP~., train)[,-1]
-y = log(train$MSRP)
+#Taking the log of MSRP --------------------------------------------------------------------------------------------------
+train = train %>% mutate(log_MSRP = log(MSRP))
+test = test %>% mutate(log_MSRP = log(MSRP))
+validate = validate %>% mutate(log_MSRP = log(MSRP))
 
-#xtest<-model.matrix(AvgWinnings~.,test)[,-1]
-#ytest<-log(test$AvgWinnings)
-xtest = model.matrix(MSRP~., test)[,-1]
-ytest = log(test$MSRP)
+# Split 3 datasets into response and variables
+train_response = train[,19]
+train_vars = data.matrix(train[,c(5,6,7,8,9,11,12,13,14,16,17,18)])
+test_response = test[,19]
+test_vars = data.matrix(test[,c(5,6,7,8,9,11,12,13,14,16,17,18)])
+validate_response = validate[,19]
+validate_vars = data.matrix(validate[,c(5,6,7,8,9,11,12,13,14,16,17,18)])
 
+#Specify the range for lambda
+lambdas = 10^seq(3,-2,by=-.1)
 
-grid=10^seq(10,-2, length =100)
-lasso.mod=glmnet(x,y,alpha=1, lambda =grid)
+#Lasso regression using the response/explanatory variables
+lasso_model = glmnet(train_vars,train_response,alpha = 1, lambda = lambdas)
+plot(lasso_model)
 
-cv.out=cv.glmnet(x,y,alpha=1) #alpha=1 performs LASSO
-plot(cv.out)
-bestlambda<-cv.out$lambda.min #Optimal penalty parameter.  You can make this call visually.
+# Display optimal lambda
+optimal_testing_lambda = lasso_model$lambda.min
 
-best_model <- glmnet(x, y, alpha = 1, lambda = bestlambda)
-coef(best_model)
+# Predicting Test set
+test_predicted = predict(lasso_model, s=optimal_lambda, newx=test_vars)
 
-lasso.pred=predict (best_model ,s=bestlambda ,newx=xtest)
+# Test MSE for Lasso
+testMSE = mean((test_response - test_predicted)^2)
+testMSE # 2149
 
-testMSE_LASSO<-mean((ytest-lasso.pred)^2)
-testMSE_LASSO
+# Define Coefficients
+coef(lasso_model, s=optimal_lambda)
+
+# Predict train set
+train_predicted = predict(lasso_model, s=optimal_lambda, newx=train_vars)
+
+# Sum of square total and error
+sst = sum((train_response - mean(train_response))^2)
+sse = sum((train_predicted - train_response)^2)
+
+# R-squared
+rsq = 1 - sse/sst
+rsq # .8227
+
+# Summary Stats of test regression model
+lasso_test_print = lm(log(MSRP) ~ 
+                        `Engine Fuel Type` +
+                        `Engine HP` +
+                        `Transmission Type` +
+                        Driven_Wheels +
+                        `Number of Doors` +
+                        `Vehicle Size` +
+                        `Vehicle Style` +
+                        `highway MPG` +
+                        Popularity +
+                        Exotic +
+                        Luxury +
+                        Age
+                        , data=data)
+summary(lasso_test_print)
+confint(lasso_test_print)
+
+# Validation Lasso Model -------------------------------------------------------------------------------------------------
+lasso_cv_model = cv.glmnet(train_vars, train_response, alpha=1, lambda=lambdas)
+plot(lasso_cv_model)
+
+# 1se lambda
+lasso_cv_model$lambda.1se
+
+# min lambda
+lasso_cv_model$lambda.min
+
+# We must compare these two lambdas -- Use Validate set to prepare accuracy statistics
+
+# Predicting Validate Set --- lambda.1se ---------------------------------------------------------------------------------
+validate_1se_predicted = predict(lasso_cv_model, s=lasso_cv_model$lambda.1se, newx=validate_vars)
+
+# Test MSE for Lasso
+validateMSE_1se = mean((validate_response - validate_1se_predicted)^2)
+validateMSE_1se # .2102
+
+# Predict train set
+train_predicted_1se = predict(lasso_cv_model, s=lasso_cv_model$lambda.1se, newx=train_vars)
+
+# Sum of square total and error
+sst_1se = sum((train_response - mean(train_response))^2)
+sse_1se = sum((train_predicted_1se - train_response)^2)
+
+# R-squared
+rsq_1se = 1 - sse_1se/sst_1se
+rsq_1se # .8191
+
+# Predicting Validate Set --- lambda.min ---------------------------------------------------------------------------------
+validate_min_predicted = predict(lasso_cv_model, s=lasso_cv_model$lambda.min, newx=validate_vars)
+
+# Test MSE for Lasso
+validateMSE_min = mean((validate_response - validate_min_predicted)^2)
+validateMSE_min # .2068
+
+# Predict train set
+train_predicted_min = predict(lasso_cv_model, s=lasso_cv_model$lambda.min, newx=train_vars)
+
+# Sum of square total and error
+sst_min = sum((train_response - mean(train_response))^2)
+sse_min = sum((train_predicted_min - train_response)^2)
+
+# R-squared
+rsq_min = 1 - sse_min/sst_min
+rsq_min # .8227
+
+# Based on MSE and RSQ, lambda.min is marginally better ------------------------------------------------------------------
+coef(lasso_cv_model, lasso_cv_model$lambda.min)
+
+lasso_validate_print = lm(log(MSRP) ~ 
+                        `Engine Fuel Type` +
+                        `Engine HP` +
+                        `Transmission Type` +
+                        Driven_Wheels +
+                        `Number of Doors` +
+                        `Vehicle Size` +
+                        `Vehicle Style` +
+                        `highway MPG` +
+                        Popularity +
+                        Exotic +
+                        Luxury +
+                        Age
+                        , data=data)
+summary(lasso_validate_print)
+confint(lasso_validate_print)
 ```
 
 ```{r}
-library(relaimpo)
+# Train, Test, Validate Split completed above in Lasso model
+train_knn = data.matrix(train[,c(5,6,7,8,9,11,12,13,14,16,17,18, 19)])
+test_response = test[,19]
+test_vars = data.matrix(test[,c(5,6,7,8,9,11,12,13,14,16,17,18)])
+validate_response = validate[,19]
+validate_vars = data.matrix(validate[,c(5,6,7,8,9,11,12,13,14,16,17,18)])
 
-# Fit most accurate regression model for MSRP (can just use LASSO or stepwise selection)
-
-# Determine the most important variables - Using the 6 methods below
-# last, first, betasq, pratt, genizi, car
-last <- calc.relimp(fit, type=c('last'), rela=TRUE)
-first <- calc.relimp(fit, type=c('first'), rela=TRUE)
-betasq <- calc.relimp(fit, type=c('betasq'), rela=TRUE)
-pratt <- calc.relimp(fit, type=c('pratt'), rela=TRUE)
-genizi <- calc.relimp(fit, type=c('genizi'), rela=TRUE)
-car <- calc.relimp(fit, type=c('car'), rela=TRUE)
-
-# Creating dataframe of results
-RelaImpo_Ranks <- data.frame(
-  'Last' = last$last,
-  'LastRank' = last$last.rank,
-  'First' = first$first,
-  'FirstRank' = first$first.rank,
-  'Betasq' = betasq$betasq,
-  'BetasqRank' = betasq$betasq.rank,
-  'Pratt' = pratt$pratt,
-  'PrattRank' = pratt$pratt.rank,
-  'Genizi' = genizi$genizi,
-  'GeniziRank' = genizi$genizi.rank,
-  'Car' = car$car,
-  'CarRank' = car$car.rank
+# KNN Test Regression ----------------------------------------------------------------------------------------------------
+test_model <- train(
+  log_MSRP ~ .,
+  data = train_knn,
+  method = 'knn',
+  preProcess = c("center", "scale")
 )
 
-# Creating Average Rank Column
-RelaImpo_Ranks <- RelaImpo_Ranks %>% mutate(
-  AverageRank = (LastRank+FirstRank+BetasqRank+PrattRank+GeniziRank+CarRank) / 6
+# Make Test Predictions
+test_predictions = predict(test_model, newdata = test_vars)
+
+# RMSE -- .2212
+sqrt(mean((test_response - test_predictions)^2))
+
+# R^2 -- .9611
+cor(test_response, test_predictions) ^ 2
+
+test_model$results
+
+# KNN Validate Regression ------------------------------------------------------------------------------------------------
+ctrl <- trainControl( method = "cv", number = 10)
+tuneGrid <- expand.grid(k = seq(4, 9, by = 1))
+
+val_model <- train(
+  log_MSRP ~ .,
+  data = train_knn,
+  method = 'knn',
+  preProcess = c("center", "scale"),
+  trControl = ctrl,
+  tuneGrid = tuneGrid
 )
+val_model$results
+plot(val_model)
 
-RelaImpo_Ranks
+# K = 4 is our best option
 
+# Make Test Predictions
+validate_predictions = predict(val_model, newdata = validate_vars)
+
+# RMSE -- .1991
+sqrt(mean((validate_response - validate_predictions)^2))
+
+# R^2 -- .9644
+cor(validate_response, validate_predictions) ^ 2
+
+val_model$results
 ```
