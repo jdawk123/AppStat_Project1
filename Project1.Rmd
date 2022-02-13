@@ -406,46 +406,10 @@ ggplot(data, aes(x=MSRP, y=Popularity)) +
 # Switch 'Year' to 'Age' --------------------------------------------------------------------------------------------------
 data$Age <- 2022 - data$Year
 
-# 80/20 Train/Test Split for Objective 1 ----------------------------------------------------------------------------------
-idx <- sample(seq(1, 2), size = nrow(data), replace = TRUE, prob = c(.8, .2))
-train <- data[idx == 1,]
-test <- data[idx == 2,]
-
-# Simple, handmade regression model ---------------------------------------------------------------------------------------
-model <- lm(log(MSRP) ~ 
-              Age + 
-              `Engine HP` + 
-              `highway MPG` + 
-              Popularity + 
-              Exotic + 
-              Luxury, data=train)
-summary(model)
-par(mfrow=c(2,2))
-plot(model)
-
-ggplot(train, aes(x=model$residuals)) + geom_histogram(fill='red', color='black') + stat_function(fun = dnorm, args = list(mean = mean(model$residuals), sd = sd(model$residuals))) + labs(title='Residual Histogram')
-
-test$MSRP_predictions <- predict(model, newdata=test)
-test$MSRP_predictions <- exp(test$MSRP_predictions)
-
-test$Diff <- abs(test$MSRP-test$MSRP_predictions)
-
-AvgDiff <- round(mean(test$Diff),2)
-AvgDiffPerc <- round(100*(AvgDiff / mean(test$MSRP)),2)
-
-ggplot(test, aes(x=MSRP, y=MSRP_predictions, color=Diff)) + 
-  geom_point() + 
-  geom_abline(slope=1, intercept=0, color='red') +
-  annotate(geom='text', label=paste('Avg Error -- $', AvgDiff, sep=''), x=400000, y=500000) +
-  annotate(geom='text', label=paste('Avg Error Rate -- ', AvgDiffPerc, '%', sep=''),x=400000, y=470000) +
-  labs(y='Predicted MSRP', title='Actual vs. Predicted MSRP', x='Actual MSRP') + xlim(0, 500000) + ylim(0, 500000)
-```
-
-```{r}
 # Using Stepwise Selection - Same Process ---------------------------------------------------------------------------------
 
 # Because Make, Model, & Market Category have many dimensions and lots of variance, we will not include these in the regression
-# Also removing Year because Age is more interpretable
+# Also removing Year because Age is more interpretative
 data_reg <- data[-c(2, 3, 4, 10)]
 
 # Change Character fields into dummies
@@ -455,39 +419,52 @@ data_reg <- dummy_cols(data_reg, select_columns= char_col_names, remove_selected
 
 # 80/20 Train/Test Split for Objective 1 ----------------------------------------------------------------------------------
 idx <- sample(seq(1, 2), size = nrow(data_reg), replace = TRUE, prob = c(.8, .2))
-train <- data_reg[idx == 1,]
-test <- data_reg[idx == 2,]
+train1 <- data_reg[idx == 1,]
+test1 <- data_reg[idx == 2,]
 
 # Build Initial Model (Log MSRP) ------------------------------------------------------------------------------------------
-model2 <- lm(log(MSRP) ~ .-ID, data=train)
-summary(model2)
+model2 <- lm(log(MSRP) ~ .-ID, data=train1)
+#summary(model2)
 
 # Stepwise Selection ------------------------------------------------------------------------------------------------------
 model2_step <- stepAIC(model2, direction='both')
-summary(model2_step)
+#summary(model2_step)
 
 # Model2_step Selection ---------------------------------------------------------------------------------------------------
 par(mfrow=c(2,2))
 plot(model2_step)
-ggplot(train, aes(x=model2_step$residuals)) + geom_histogram(fill='red', color='black') + stat_function(fun = dnorm, args = list(mean = mean(model2_step$residuals), sd = sd(model2_step$residuals))) + labs(title='Residual Histogram')
+ggplot(train1, aes(x=model2_step$residuals)) + geom_histogram(fill='red', color='black') + stat_function(fun = dnorm, args = list(mean = mean(model2_step$residuals), sd = sd(model2_step$residuals))) + labs(title='Residual Histogram')
 
 # Making Predictions ------------------------------------------------------------------------------------------------------
-test$MSRP_predictions <- predict(model2_step, newdata=test)
-test$MSRP_predictions <- exp(test$MSRP_predictions)
+test1$MSRP_predictions <- predict(model2_step, newdata=test1)
+test1$MSRP_predictions <- exp(test1$MSRP_predictions)
 
-test$Diff <- abs(test$MSRP-test$MSRP_predictions)
+test1$Diff <- abs(test1$MSRP-test1$MSRP_predictions)
 
-AvgDiff <- round(mean(test$Diff),2)
-AvgDiffPerc <- round(100*(AvgDiff / mean(test$MSRP)),2)
+AvgDiff_base <- round(mean(test1$Diff),2)
+AvgDiffPerc_base <- round(100*(AvgDiff_base / mean(test1$MSRP)),2)
+
+# Test MSE ----------------------------------------------------------------------------------------------------------------
+logtest_1MSE = round(mean((log(test1$MSRP) - log(test1$MSRP_predictions))^2),4)
+test_1MSE = round(mean((test1$MSRP - test1$MSRP_predictions)^2),4)
+print(paste('Log(USD) Test MSE = ', logtest_1MSE, sep=''))
+print(paste('USD Test MSE = ', test_1MSE, sep='')) # .2409
+
+# Test AIC & BIC ----------------------------------------------------------------------------------------------------------
+print(paste('AIC ', round(AIC(model2_step),4), sep='')) # 11,157.35
+print(paste('BIC ', round(BIC(model2_step),4), sep='')) # 11,422.28
+
+# Some Model Stuff --------------------------------------------------------------------------------------------------------
+summary(model2_step)
 
 # Plot Differences --------------------------------------------------------------------------------------------------------
-ggplot(test, aes(x=MSRP, y=MSRP_predictions, color=Diff)) + 
-  geom_point() + 
-  geom_abline(slope=1, intercept=0, color='red') +
-  annotate(geom='text', label=paste('Avg Error -- $', AvgDiff, sep=''), x=100000, y=500000) +
-  annotate(geom='text', label=paste('Avg Error Rate -- %', AvgDiffPerc, sep=''),x=100000, y=470000) +
-  labs(y='Predicted MSRP', title='Actual vs. Predicted MSRP', x='Actual MSRP') +
-  xlim(0, 600000) + ylim(0, 600000)
+#ggplot(test1, aes(x=MSRP, y=MSRP_predictions, color=Diff)) + 
+#  geom_point() + 
+#  geom_abline(slope=1, intercept=0, color='red') +
+#  annotate(geom='text', label=paste('Avg Error -- $', AvgDiff_base, sep=''), x=100000, y=500000) +
+#  annotate(geom='text', label=paste('Avg Error Rate -- %', AvgDiffPerc_base, sep=''),x=100000, y=470000) +
+#  labs(y='Predicted MSRP', title='Actual vs. Predicted MSRP', x='Actual MSRP') +
+#  xlim(0, 500000) + ylim(0, 500000)
 ```
 
 ```{r}
@@ -504,7 +481,7 @@ train = train %>% mutate(log_MSRP = log(MSRP))
 test = test %>% mutate(log_MSRP = log(MSRP))
 validate = validate %>% mutate(log_MSRP = log(MSRP))
 
-# Split 3 datasets into response and variables
+# Split 3 datasets into response and variables ---------------------------------------------------------------------------
 train_response = train[,19]
 train_vars = data.matrix(train[,c(5,6,7,8,9,11,12,13,14,16,17,18)])
 test_response = test[,19]
@@ -515,25 +492,25 @@ validate_vars = data.matrix(validate[,c(5,6,7,8,9,11,12,13,14,16,17,18)])
 #Specify the range for lambda
 lambdas = 10^seq(3,-2,by=-.1)
 
-#Lasso regression using the response/explanatory variables
-lasso_model = glmnet(train_vars,train_response,alpha = 1, lambda = lambdas)
+#Lasso regression using the response/explanatory variables ---------------------------------------------------------------
+lasso_model = glmnet(train_vars,train_response,alpha = 1)
 plot(lasso_model)
 
 # Display optimal lambda
-optimal_testing_lambda = lasso_model$lambda.min
+optimal_testing_lambda = lasso_model$lambda[40] # Choosing a value similar to lambda.1se & lambda.min from cv.glm()
 
 # Predicting Test set
-test_predicted = predict(lasso_model, s=optimal_lambda, newx=test_vars)
+test_predicted = predict(lasso_model, s=optimal_testing_lambda, newx=test_vars)
 
 # Test MSE for Lasso
 testMSE = mean((test_response - test_predicted)^2)
-testMSE # 2149
+testMSE # .2149
 
 # Define Coefficients
-coef(lasso_model, s=optimal_lambda)
+coef(lasso_model, s=optimal_testing_lambda)
 
 # Predict train set
-train_predicted = predict(lasso_model, s=optimal_lambda, newx=train_vars)
+train_predicted = predict(lasso_model, s=optimal_testing_lambda, newx=train_vars)
 
 # Sum of square total and error
 sst = sum((train_response - mean(train_response))^2)
@@ -541,7 +518,7 @@ sse = sum((train_predicted - train_response)^2)
 
 # R-squared
 rsq = 1 - sse/sst
-rsq # .8227
+rsq # .8199
 
 # Summary Stats of test regression model
 lasso_test_print = lm(log(MSRP) ~ 
@@ -559,7 +536,7 @@ lasso_test_print = lm(log(MSRP) ~
                         Age
                         , data=data)
 summary(lasso_test_print)
-confint(lasso_test_print)
+#confint(lasso_test_print)
 
 # Validation Lasso Model -------------------------------------------------------------------------------------------------
 lasso_cv_model = cv.glmnet(train_vars, train_response, alpha=1, lambda=lambdas)
@@ -576,7 +553,7 @@ lasso_cv_model$lambda.min
 # Predicting Validate Set --- lambda.1se ---------------------------------------------------------------------------------
 validate_1se_predicted = predict(lasso_cv_model, s=lasso_cv_model$lambda.1se, newx=validate_vars)
 
-# Test MSE for Lasso
+# Validate MSE for Lasso
 validateMSE_1se = mean((validate_response - validate_1se_predicted)^2)
 validateMSE_1se # .2102
 
@@ -591,7 +568,7 @@ sse_1se = sum((train_predicted_1se - train_response)^2)
 rsq_1se = 1 - sse_1se/sst_1se
 rsq_1se # .8191
 
-# Predicting Validate Set --- lambda.min ---------------------------------------------------------------------------------
+# Predicting Validate Set --- [[lambda.min]] -----------------------------------------------------------------------------
 validate_min_predicted = predict(lasso_cv_model, s=lasso_cv_model$lambda.min, newx=validate_vars)
 
 # Test MSE for Lasso
@@ -626,8 +603,34 @@ lasso_validate_print = lm(log(MSRP) ~
                         Luxury +
                         Age
                         , data=data)
-summary(lasso_validate_print)
-confint(lasso_validate_print)
+#summary(lasso_validate_print)
+#confint(lasso_validate_print)
+
+# Create Error Graph ------------------------------------------------------------------------------------------------------
+lasso_val_results <- data.frame('Actual_MSRP' = validate_response)
+lasso_val_results$Predicted_MSRP <- numeric(nrow(lasso_val_results))
+
+for (i in 1:length(validate_min_predicted)) {
+  lasso_val_results$Predicted_MSRP[i] = validate_min_predicted[i]
+}
+
+# Convert Results back to MSRP Scale --------------------------------------------------------------------------------------
+lasso_val_results <- exp(lasso_val_results)
+
+# Create Diff Variable ----------------------------------------------------------------------------------------------------
+lasso_val_results$Diff <- abs(lasso_val_results$Actual_MSRP - lasso_val_results$Predicted_MSRP)
+
+# Calculate Avg Error & Avg Error Rate ------------------------------------------------------------------------------------
+AvgDiff_lasso <- round(mean(lasso_val_results$Diff),2)
+AvgDiffPerc_lasso <- round(100*(AvgDiff_lasso / mean(lasso_val_results$Actual_MSRP)),2)
+
+# Create Chart ------------------------------------------------------------------------------------------------------------
+ggplot(lasso_val_results, aes(x=Actual_MSRP, y=Predicted_MSRP, color=Diff)) + 
+  geom_point() + 
+  geom_abline(slope=1, intercept=0, color='red') +
+  annotate(geom='text', label=paste('Avg Error -- $', AvgDiff_lasso, sep=''), x=100000, y=500000) +
+  annotate(geom='text', label=paste('Avg Error Rate -- ', AvgDiffPerc_lasso, '%', sep=''),x=100000, y=470000) +
+  labs(y='Predicted MSRP', title='Actual vs. Predicted MSRP - Validated LASSO Model', x='Actual MSRP')
 ```
 
 ```{r}
@@ -649,13 +652,13 @@ test_model <- train(
 # Make Test Predictions
 test_predictions = predict(test_model, newdata = test_vars)
 
-# RMSE -- .2212
-sqrt(mean((test_response - test_predictions)^2))
+# RMSE -- .0489
+mean((test_response - test_predictions)^2)
 
 # R^2 -- .9611
 cor(test_response, test_predictions) ^ 2
 
-test_model$results
+test_model
 
 # KNN Validate Regression ------------------------------------------------------------------------------------------------
 ctrl <- trainControl( method = "cv", number = 10)
@@ -669,19 +672,94 @@ val_model <- train(
   trControl = ctrl,
   tuneGrid = tuneGrid
 )
-val_model$results
 plot(val_model)
 
 # K = 4 is our best option
 
 # Make Test Predictions
-validate_predictions = predict(val_model, newdata = validate_vars)
+validate_predictions <- predict(val_model, newdata = validate_vars)
 
-# RMSE -- .1991
-sqrt(mean((validate_response - validate_predictions)^2))
+# MSE -- .0396
+mean((validate_response - validate_predictions)^2)
 
 # R^2 -- .9644
 cor(validate_response, validate_predictions) ^ 2
 
-val_model$results
+val_model
+
+# Create Error Graph ------------------------------------------------------------------------------------------------------
+knn_val_results <- data.frame('Actual_MSRP' = validate_response)
+knn_val_results$Predicted_MSRP <- numeric(nrow(knn_val_results))
+
+for (i in 1:length(validate_predictions)) {
+  knn_val_results$Predicted_MSRP[i] = validate_predictions[i]
+}
+
+# Convert Results back to MSRP Scale --------------------------------------------------------------------------------------
+knn_val_results <- exp(knn_val_results)
+
+# Create Diff Variable ----------------------------------------------------------------------------------------------------
+knn_val_results$Diff <- abs(knn_val_results$Actual_MSRP - knn_val_results$Predicted_MSRP)
+
+# Calculate Avg Error & Avg Error Rate ------------------------------------------------------------------------------------
+AvgDiff_knn <- round(mean(knn_val_results$Diff),2)
+AvgDiffPerc_knn <- round(100*(AvgDiff_knn / mean(knn_val_results$Actual_MSRP)),2)
+
+# Create Chart ------------------------------------------------------------------------------------------------------------
+ggplot(knn_val_results, aes(x=Actual_MSRP, y=Predicted_MSRP, color=Diff)) + 
+  geom_point() + 
+  geom_abline(slope=1, intercept=0, color='red') +
+  annotate(geom='text', label=paste('Avg Error -- $', AvgDiff_knn, sep=''), x=100000, y=500000) +
+  annotate(geom='text', label=paste('Avg Error Rate -- ', AvgDiffPerc_knn, '%', sep=''),x=100000, y=470000) +
+  labs(y='Predicted MSRP', title='Actual vs. Predicted MSRP - Validated KNN Reg Model', x='Actual MSRP')
+```
+
+```{r}
+# Final Model Comparison
+
+
+# Test R-Squared
+# SIMPLE: .8460
+# LASSO:  .8199 (.8423 from lm() model made from variables from test LASSO)
+# KNN:    .9302
+
+# Validation R-Squared
+# SIMPLE: N/A
+# LASSO:  .8227 (.8423 from lm() model made from variables from test LASSO)
+# KNN:    .9476
+
+# Test MSE
+# SIMPLE: .2409  /  2,306,091,868
+# LASSO:  .9068  /  2,076,796,529
+# KNN:    .0849  /    153,948,128
+
+# Validation MSE
+# SIMPLE: N/A    /            N/A
+# LASSO:  .2068  /    785,269,607
+# KNN:    .0641  /    133,047,991
+
+# Stepwise Chart
+ggplot(test1, aes(x=MSRP, y=MSRP_predictions, color=Diff)) + 
+  geom_point() + 
+  geom_abline(slope=1, intercept=0, color='red') +
+  annotate(geom='text', label=paste('Avg Error -- $', AvgDiff_base, sep=''), x=100000, y=500000) +
+  annotate(geom='text', label=paste('Avg Error Rate -- %', AvgDiffPerc_base, sep=''),x=100000, y=470000) +
+  labs(y='Predicted MSRP', title='Actual vs. Predicted MSRP - Stepwise Selection Model', x='Actual MSRP') +
+  xlim(0, 500000) + ylim(0, 500000)
+
+# LASSO Chart
+ggplot(lasso_val_results, aes(x=Actual_MSRP, y=Predicted_MSRP, color=Diff)) + 
+  geom_point() + 
+  geom_abline(slope=1, intercept=0, color='red') +
+  annotate(geom='text', label=paste('Avg Error -- $', AvgDiff_lasso, sep=''), x=100000, y=500000) +
+  annotate(geom='text', label=paste('Avg Error Rate -- ', AvgDiffPerc_lasso, '%', sep=''),x=100000, y=470000) +
+  labs(y='Predicted MSRP', title='Actual vs. Predicted MSRP - Validated LASSO Model', x='Actual MSRP')
+
+# Knn Chart
+ggplot(knn_val_results, aes(x=Actual_MSRP, y=Predicted_MSRP, color=Diff)) + 
+  geom_point() + 
+  geom_abline(slope=1, intercept=0, color='red') +
+  annotate(geom='text', label=paste('Avg Error -- $', AvgDiff_knn, sep=''), x=100000, y=500000) +
+  annotate(geom='text', label=paste('Avg Error Rate -- ', AvgDiffPerc_knn, '%', sep=''),x=100000, y=470000) +
+  labs(y='Predicted MSRP', title='Actual vs. Predicted MSRP - Validated KNN Reg Model', x='Actual MSRP')
 ```
